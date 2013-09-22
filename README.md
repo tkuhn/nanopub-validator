@@ -1,4 +1,6 @@
 Inofficial Validator for Nanopublications
 =========================================
 
-UNDER CONSTRUCTION...
+This is an inofficial validator interface for nanopublications.
+
+http://nanopub.inn.ac
