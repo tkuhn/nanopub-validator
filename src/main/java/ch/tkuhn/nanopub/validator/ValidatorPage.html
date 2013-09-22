@@ -2,18 +2,35 @@
 <html xmlns:wicket="http://wicket.apache.org">
 
 <head>
-
 <meta charset="utf-8" />
-<title>Validator for Nanopublications</title>
+<title>Inofficial Validator for Nanopublications</title>
 <link rel="stylesheet" href="style.css" type="text/css" media="screen" title="Stylesheet" />
-
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
 
-<h1>Validator for Nanopublications</h1>
+<h1>Inofficial Validator for Nanopublications</h1>
 
-<p>Under construction...</p>
+<h3>Input</h3>
+
+<form wicket:id="form">
+
+<p>Paste your nanopublication here in TriG format (UTF-8 encoded):</p>
+
+<p><textarea wicket:id="nanopubtext" rows="10" cols="80"></textarea></p>
+
+<p>
+<input type="submit" class="button" href="#" value="Validate" />
+</p>
+
+</form>
+
+<h3><span wicket:id="resulttitle"></span></h3>
+
+<p>
+<span wicket:id="result"></span>
+</p>
 
 </body>
 
