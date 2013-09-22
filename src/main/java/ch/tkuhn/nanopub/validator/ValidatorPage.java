@@ -1,11 +1,16 @@
 package ch.tkuhn.nanopub.validator;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.openrdf.OpenRDFException;
 import org.openrdf.rio.RDFFormat;
@@ -17,7 +22,12 @@ public class ValidatorPage extends WebPage {
 
 	private static final long serialVersionUID = -8749816277274862810L;
 
+	private static final List<String> FORMATS = Arrays.asList(
+			new String[] { "TriG", "TriX", "N-Quads" });
+	private String selectedFormat = "TriG";
+
 	private Model<String> inputTextModel = new Model<>("");
+	private PropertyModel<String> formatModel = new PropertyModel<String>(this, "selectedFormat");
 	private Model<String> resultModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> resultTitleStyleModel = new Model<String>("display:none");
@@ -30,8 +40,15 @@ public class ValidatorPage extends WebPage {
 			private static final long serialVersionUID = 7483611710394125186L;
 
 			protected void onSubmit() {
+				String inputText = inputTextModel.getObject();
+				if (inputText == null || inputText.isEmpty()) {
+					resultTitleModel.setObject("");
+					resultTitleStyleModel.setObject("color:black");
+					resultModel.setObject("");
+					return;
+				}
 				try {
-					new NanopubImpl(inputTextModel.getObject(), RDFFormat.TRIG);
+					new NanopubImpl(inputText, getFormat());
 					resultModel.setObject("Congratulations, this is a valid nanopublication!");
 					resultTitleModel.setObject("Valid");
 					resultTitleStyleModel.setObject("color:green");
@@ -55,10 +72,23 @@ public class ValidatorPage extends WebPage {
 		add(form);
 
 		form.add(new TextArea<String>("nanopubtext", inputTextModel));
+		form.add(new RadioChoice<String>("format", formatModel, FORMATS));
 
 		Label resultTitle = new Label("resulttitle", resultTitleModel);
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 		add(resultTitle);
 		add(new Label("result", resultModel));
     }
+
+	private RDFFormat getFormat() {
+		if (selectedFormat.equals("TriG")) {
+			return RDFFormat.TRIG;
+		} else if (selectedFormat.equals("TriX")) {
+			return RDFFormat.TRIX;
+		} else if (selectedFormat.equals("N-Quads")) {
+			return RDFFormat.NQUADS;
+		}
+		return null;
+	}
+
 }
