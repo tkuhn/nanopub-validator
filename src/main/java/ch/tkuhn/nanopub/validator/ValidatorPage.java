@@ -16,6 +16,7 @@ import org.openrdf.OpenRDFException;
 import org.openrdf.rio.RDFFormat;
 
 import ch.tkuhn.nanopub.MalformedNanopubException;
+import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
 
 public class ValidatorPage extends WebPage {
@@ -47,8 +48,9 @@ public class ValidatorPage extends WebPage {
 					resultModel.setObject("");
 					return;
 				}
+				Nanopub nanopub;
 				try {
-					new NanopubImpl(inputText, getFormat());
+					nanopub = new NanopubImpl(inputText, getFormat());
 					resultModel.setObject("Congratulations, this is a valid nanopublication!");
 					resultTitleModel.setObject("Valid");
 					resultTitleStyleModel.setObject("color:green");
@@ -56,14 +58,38 @@ public class ValidatorPage extends WebPage {
 					resultTitleModel.setObject("Invalid");
 					resultTitleStyleModel.setObject("color:red");
 					resultModel.setObject(ex.getMessage());
+					return;
 				} catch (MalformedNanopubException ex) {
 					resultTitleModel.setObject("Invalid");
 					resultTitleStyleModel.setObject("color:red");
 					resultModel.setObject(ex.getMessage());
+					return;
 				} catch (Exception ex) {
 					resultTitleModel.setObject("Unexpected Error");
 					resultTitleStyleModel.setObject("color:black");
 					resultModel.setObject(ex.getMessage());
+					return;
+				}
+				if (nanopub.getAssertion().isEmpty()) {
+					resultTitleModel.setObject("Warning");
+					resultTitleStyleModel.setObject("color:orange");
+					resultModel.setObject("Empty assertion graph");
+				} else if (nanopub.getProvenance().isEmpty()) {
+					resultTitleModel.setObject("Warning");
+					resultTitleStyleModel.setObject("color:orange");
+					resultModel.setObject("Empty provenance graph");
+				} else if (nanopub.getPubinfo().isEmpty()) {
+					resultTitleModel.setObject("Warning");
+					resultTitleStyleModel.setObject("color:orange");
+					resultModel.setObject("Empty publication info graph");
+				} else if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
+					resultTitleModel.setObject("Warning");
+					resultTitleStyleModel.setObject("color:orange");
+					resultModel.setObject("No creators or authors found");
+				} else if (nanopub.getCreationTime() == null) {
+					resultTitleModel.setObject("Warning");
+					resultTitleStyleModel.setObject("color:orange");
+					resultModel.setObject("No creation time found");
 				}
 			}
 
