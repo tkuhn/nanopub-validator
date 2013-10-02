@@ -45,6 +45,7 @@ public class ValidatorPage extends WebPage {
 		downloadSection.add(new ResourceLink<Object>("trigdownload", new DownloadResource(RDFFormat.TRIG, this)));
 		downloadSection.add(new ResourceLink<Object>("trixdownload", new DownloadResource(RDFFormat.TRIX, this)));
 		downloadSection.add(new ResourceLink<Object>("nqdownload", new DownloadResource(RDFFormat.NQUADS, this)));
+		downloadSection.add(new ResourceLink<Object>("rdfjsondownload", new DownloadResource(RDFFormat.RDFJSON, this)));
     }
 
 	Nanopub getNanopub() {
