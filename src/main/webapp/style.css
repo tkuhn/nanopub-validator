@@ -66,3 +66,11 @@ strong {
 	color: black;
 	font-weight: bold;
 }
+
+.hidden {
+	visibility:hidden;
+}
+
+.visible {
+	visibility:visible;
+}

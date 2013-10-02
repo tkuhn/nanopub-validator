@@ -1,8 +1,10 @@
 package ch.tkuhn.nanopub.validator;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.openrdf.OpenRDFException;
@@ -22,6 +24,10 @@ public class ValidatorPage extends WebPage {
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> resultTitleStyleModel = new Model<String>("display:none");
 
+	private WebMarkupContainer downloadSection;
+
+	private Nanopub nanopub;
+
 	public ValidatorPage(final PageParameters parameters) {
 		super(parameters);
 
@@ -31,10 +37,24 @@ public class ValidatorPage extends WebPage {
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 		add(resultTitle);
 		add(new Label("result", resultModel));
+
+		downloadSection = new WebMarkupContainer("download");
+		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		add(downloadSection);
+
+		downloadSection.add(new ResourceLink<Object>("trigdownload", new DownloadResource(RDFFormat.TRIG, this)));
+		downloadSection.add(new ResourceLink<Object>("trixdownload", new DownloadResource(RDFFormat.TRIX, this)));
+		downloadSection.add(new ResourceLink<Object>("nqdownload", new DownloadResource(RDFFormat.NQUADS, this)));
     }
 
+	Nanopub getNanopub() {
+		return nanopub;
+	}
+
 	void showResult(int mode, Object... objs) {
-		Nanopub nanopub = null;
+		nanopub = null;
+		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+
 		try {
 			if (mode == DIRECT_INPUT_MODE) {
 				String inputText = (String) objs[0];
@@ -62,6 +82,7 @@ public class ValidatorPage extends WebPage {
 			resultModel.setObject(ex.getMessage());
 			return;
 		}
+		downloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		if (nanopub.getAssertion().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
