@@ -74,3 +74,36 @@ strong {
 .visible {
 	visibility:visible;
 }
+
+#tabpanel ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+#tabpanel li {
+	display: inline;
+	border: solid;
+	border-color: #bbb;
+	border-radius: 10px 10px 0 0;
+	border-width: 1px 1px 0 1px;
+	padding: 5px 5px 1px 5px;
+	margin: 0 0.5em 0 0;
+}
+
+#tabpanel li a {
+	padding: 0 1em;
+}
+
+#tabpanel li.selected {
+	background: #eee;
+}
+
+.tab {
+	border-radius: 0 10px 10px 10px;
+	border-color: #bbb;
+	border-style: solid;
+	border-width: 1px;
+	padding: 1em;
+	background: #eee;
+}

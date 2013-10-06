@@ -1,9 +1,12 @@
 package ch.tkuhn.nanopub.validator;
 
+import org.apache.wicket.util.file.Folder;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public class ValidatorApplication extends WebApplication {
+
+	private Folder uploadFolder = null;
 
 	@Override
 	public Class<? extends WebPage> getHomePage() {
@@ -12,6 +15,12 @@ public class ValidatorApplication extends WebApplication {
 
 	public void init() {
 		super.init();
+		uploadFolder = new Folder(System.getProperty("java.io.tmpdir"), "wicket-uploads");
+		uploadFolder.mkdirs();
+	}
+
+	public Folder getUploadFolder() {
+		return uploadFolder;
 	}
 
 }

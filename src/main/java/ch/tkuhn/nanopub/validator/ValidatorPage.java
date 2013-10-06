@@ -1,10 +1,18 @@
 package ch.tkuhn.nanopub.validator;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
+import org.apache.wicket.extensions.markup.html.tabs.ITab;
+import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.openrdf.OpenRDFException;
@@ -19,10 +27,13 @@ public class ValidatorPage extends WebPage {
 	private static final long serialVersionUID = -8749816277274862810L;
 
 	static final int DIRECT_INPUT_MODE = 1;
+	static final int FILE_UPLOAD_MODE = 2;
 
 	private Model<String> resultModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> resultTitleStyleModel = new Model<String>("display:none");
+
+	private Panel directInputPanel, fileUploadPanel;
 
 	private WebMarkupContainer downloadSection;
 
@@ -31,8 +42,35 @@ public class ValidatorPage extends WebPage {
 	public ValidatorPage(final PageParameters parameters) {
 		super(parameters);
 
-		add(new DirectInputPanel("panel", this));
+		List<ITab> tabs = new ArrayList<>();
+		tabs.add(new AbstractTab(new Model<String>("Direct Input")) {
 
+			private static final long serialVersionUID = -7872913277026344515L;
+
+			public Panel getPanel(String panelId) {
+				if (directInputPanel == null) {
+					directInputPanel = new DirectInputPanel(panelId, ValidatorPage.this);
+				}
+				return directInputPanel;
+			}
+
+		});
+		 
+		tabs.add(new AbstractTab(new Model<String>("Upload File")) {
+
+			private static final long serialVersionUID = -5236526957334243565L;
+
+			public Panel getPanel(String panelId) {
+				if (fileUploadPanel == null) {
+					fileUploadPanel = new FileUploadPanel(panelId, ValidatorPage.this);
+				}
+				return fileUploadPanel;
+			}
+
+		});
+
+		add(new TabbedPanel<ITab>("tabs", tabs));
+		
 		Label resultTitle = new Label("resulttitle", resultTitleModel);
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 		add(resultTitle);
@@ -66,6 +104,9 @@ public class ValidatorPage extends WebPage {
 					return;
 				}
 				nanopub = new NanopubImpl(inputText, (RDFFormat) objs[1]);
+			} else if (mode == FILE_UPLOAD_MODE) {
+				File file = (File) objs[0];
+				nanopub = new NanopubImpl(file);
 			}
 		} catch (OpenRDFException ex) {
 			resultTitleModel.setObject("Invalid");
