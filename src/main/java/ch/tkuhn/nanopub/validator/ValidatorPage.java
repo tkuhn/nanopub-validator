@@ -17,6 +17,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.openrdf.OpenRDFException;
+import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
+import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.rio.RDFFormat;
 
 import ch.tkuhn.nanopub.MalformedNanopubException;
@@ -30,12 +33,13 @@ public class ValidatorPage extends WebPage {
 	static final int DIRECT_INPUT_MODE = 1;
 	static final int FILE_UPLOAD_MODE = 2;
 	static final int URL_MODE = 3;
+	static final int SPARQL_ENDPOINT_MODE = 4;
 
 	private Model<String> resultModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> resultTitleStyleModel = new Model<String>("display:none");
 
-	private Panel directInputPanel, fileUploadPanel, urlPanel;
+	private Panel directInputPanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
 	private WebMarkupContainer downloadSection;
 
@@ -84,6 +88,19 @@ public class ValidatorPage extends WebPage {
 
 		});
 
+		tabs.add(new AbstractTab(new Model<String>("SPARQL Endpoint")) {
+
+			private static final long serialVersionUID = 5357887346654745284L;
+
+			public Panel getPanel(String panelId) {
+				if (sparqlEndpointPanel == null) {
+					sparqlEndpointPanel = new SparqlEndpointPanel(panelId, ValidatorPage.this);
+				}
+				return sparqlEndpointPanel;
+			}
+
+		});
+
 		add(new TabbedPanel<ITab>("tabs", tabs));
 
 		Label resultTitle = new Label("resulttitle", resultTitleModel);
@@ -125,6 +142,12 @@ public class ValidatorPage extends WebPage {
 			} else if (mode == URL_MODE) {
 				URL url = new URL((String) objs[0]);
 				nanopub = new NanopubImpl(url);
+			} else if (mode == SPARQL_ENDPOINT_MODE) {
+				SPARQLRepository sr = new SPARQLRepository((String) objs[0]);
+				URI nanopubUri = new URIImpl((String) objs[1]);
+				sr.initialize();
+				nanopub = new NanopubImpl(sr, nanopubUri);
+				sr.shutDown();
 			}
 		} catch (OpenRDFException ex) {
 			resultTitleModel.setObject("Invalid");
