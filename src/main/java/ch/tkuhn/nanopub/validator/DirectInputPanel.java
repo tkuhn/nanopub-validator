@@ -32,7 +32,12 @@ public class DirectInputPanel extends Panel {
 			private static final long serialVersionUID = 7483611710394125186L;
 
 			protected void onSubmit() {
-				page.showResult(ValidatorPage.DIRECT_INPUT_MODE, inputTextModel.getObject(), getFormat());
+				String text = inputTextModel.getObject();
+				if (text != null && !text.isEmpty()) {
+					page.showResult(ValidatorPage.DIRECT_INPUT_MODE, text, getFormat());
+				} else {
+					page.clear();
+				}
 			}
 
 		};

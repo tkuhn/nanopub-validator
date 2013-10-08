@@ -1,6 +1,7 @@
 package ch.tkuhn.nanopub.validator;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +29,13 @@ public class ValidatorPage extends WebPage {
 
 	static final int DIRECT_INPUT_MODE = 1;
 	static final int FILE_UPLOAD_MODE = 2;
+	static final int URL_MODE = 3;
 
 	private Model<String> resultModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> resultTitleStyleModel = new Model<String>("display:none");
 
-	private Panel directInputPanel, fileUploadPanel;
+	private Panel directInputPanel, fileUploadPanel, urlPanel;
 
 	private WebMarkupContainer downloadSection;
 
@@ -55,7 +57,7 @@ public class ValidatorPage extends WebPage {
 			}
 
 		});
-		 
+
 		tabs.add(new AbstractTab(new Model<String>("Upload File")) {
 
 			private static final long serialVersionUID = -5236526957334243565L;
@@ -69,8 +71,21 @@ public class ValidatorPage extends WebPage {
 
 		});
 
+		tabs.add(new AbstractTab(new Model<String>("URL")) {
+
+			private static final long serialVersionUID = 2645031269099631888L;
+
+			public Panel getPanel(String panelId) {
+				if (urlPanel == null) {
+					urlPanel = new UrlPanel(panelId, ValidatorPage.this);
+				}
+				return urlPanel;
+			}
+
+		});
+
 		add(new TabbedPanel<ITab>("tabs", tabs));
-		
+
 		Label resultTitle = new Label("resulttitle", resultTitleModel);
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 		add(resultTitle);
@@ -92,7 +107,7 @@ public class ValidatorPage extends WebPage {
 
 	void showResult(int mode, Object... objs) {
 		nanopub = null;
-		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		clear();
 
 		try {
 			if (mode == DIRECT_INPUT_MODE) {
@@ -107,6 +122,9 @@ public class ValidatorPage extends WebPage {
 			} else if (mode == FILE_UPLOAD_MODE) {
 				File file = (File) objs[0];
 				nanopub = new NanopubImpl(file);
+			} else if (mode == URL_MODE) {
+				URL url = new URL((String) objs[0]);
+				nanopub = new NanopubImpl(url);
 			}
 		} catch (OpenRDFException ex) {
 			resultTitleModel.setObject("Invalid");
@@ -154,6 +172,12 @@ public class ValidatorPage extends WebPage {
 		resultModel.setObject("Congratulations, this is a valid nanopublication!");
 		resultTitleModel.setObject("Valid");
 		resultTitleStyleModel.setObject("color:green");
+	}
+
+	void clear() {
+		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		resultTitleModel.setObject("");
+		resultModel.setObject("");
 	}
 
 }

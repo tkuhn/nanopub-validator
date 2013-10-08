@@ -56,6 +56,8 @@ public class FileUploadPanel extends Panel {
                 } catch (Exception e) {
                 	throw new IllegalStateException("Unable to write file", e);
                 }
+			} else {
+				page.clear();
 			}
 		}
 	}
