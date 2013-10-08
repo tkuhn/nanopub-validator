@@ -55,7 +55,7 @@ public class DirectInputPanel extends Panel {
 
 		} );
 		form.add(new TextArea<String>("nanopubtext", inputTextModel));
-		form.add(new RadioChoice<String>("format", formatModel, FORMATS));
+		form.add(new RadioChoice<String>("format", formatModel, FORMATS).setSuffix("&nbsp;"));
 	}
 
 	private RDFFormat getFormat() {
