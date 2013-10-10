@@ -22,6 +22,8 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.rio.RDFFormat;
 
+import ch.tkuhn.hashuri.HashUriUtils;
+import ch.tkuhn.hashuri.rdf.CheckNanopub;
 import ch.tkuhn.nanopub.MalformedNanopubException;
 import ch.tkuhn.nanopub.Nanopub;
 import ch.tkuhn.nanopub.NanopubImpl;
@@ -35,13 +37,17 @@ public class ValidatorPage extends WebPage {
 	static final int URL_MODE = 3;
 	static final int SPARQL_ENDPOINT_MODE = 4;
 
-	private Model<String> resultModel = new Model<>("");
+	private Model<String> resultTextModel = new Model<>("");
+	private Model<String> hashUriTextModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
-	private Model<String> resultTitleStyleModel = new Model<String>("display:none");
+	private Model<String> hashUriTitleModel = new Model<>("");
+	private Model<String> resultTitleStyleModel = new Model<String>();
+	private Model<String> hashUriTitleStyleModel = new Model<String>();
 
 	private Panel directInputPanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
 	private WebMarkupContainer downloadSection;
+
 
 	private Nanopub nanopub;
 
@@ -104,9 +110,15 @@ public class ValidatorPage extends WebPage {
 		add(new TabbedPanel<ITab>("tabs", tabs));
 
 		Label resultTitle = new Label("resulttitle", resultTitleModel);
-		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 		add(resultTitle);
-		add(new Label("result", resultModel));
+		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
+		add(new Label("resulttext", resultTextModel));
+
+		Label hashUriTitle = new Label("hashurititle", hashUriTitleModel);
+		add(hashUriTitle);
+		hashUriTitle.add(new AttributeModifier("style", hashUriTitleStyleModel));
+		add(new Label("hashuritext", hashUriTextModel));
+		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 
 		downloadSection = new WebMarkupContainer("download");
 		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
@@ -132,7 +144,7 @@ public class ValidatorPage extends WebPage {
 				if (inputText == null || inputText.isEmpty()) {
 					resultTitleModel.setObject("");
 					resultTitleStyleModel.setObject("color:black");
-					resultModel.setObject("");
+					resultTextModel.setObject("");
 					return;
 				}
 				nanopub = new NanopubImpl(inputText, (RDFFormat) objs[1]);
@@ -150,57 +162,72 @@ public class ValidatorPage extends WebPage {
 				sr.shutDown();
 			}
 		} catch (OpenRDFException ex) {
-			resultTitleModel.setObject("Invalid");
+			resultTitleModel.setObject("Invalid Nanopublication");
 			resultTitleStyleModel.setObject("color:red");
-			resultModel.setObject(ex.getMessage());
+			resultTextModel.setObject(ex.getMessage());
 			return;
 		} catch (MalformedNanopubException ex) {
-			resultTitleModel.setObject("Invalid");
+			resultTitleModel.setObject("Invalid Nanopublication");
 			resultTitleStyleModel.setObject("color:red");
-			resultModel.setObject(ex.getMessage());
+			resultTextModel.setObject(ex.getMessage());
 			return;
 		} catch (Exception ex) {
 			resultTitleModel.setObject("Unexpected Error");
 			resultTitleStyleModel.setObject("color:black");
-			resultModel.setObject(ex.getMessage());
+			resultTextModel.setObject(ex.getMessage());
 			return;
+		}
+		if (!HashUriUtils.isPotentialHashUri(nanopub.getUri())) {
+			hashUriTitleModel.setObject("No Hash-URI");
+			hashUriTitleStyleModel.setObject("color:black");
+			hashUriTextModel.setObject("This nanopublication has no hash-URI.");
+		} else if (CheckNanopub.isValid(nanopub)) {
+			hashUriTitleModel.setObject("Valid Hash-URI");
+			hashUriTitleStyleModel.setObject("color:green");
+			hashUriTextModel.setObject("This nanopublication has a valid hash-URI.");
+		} else {
+			hashUriTitleModel.setObject("Invalid Hash-URI");
+			hashUriTitleStyleModel.setObject("color:red");
+			hashUriTextModel.setObject("This nanopublication has an invalid hash-URI.");
 		}
 		downloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		if (nanopub.getAssertion().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
-			resultModel.setObject("Empty assertion graph");
+			resultTextModel.setObject("Empty assertion graph");
 			return;
 		} else if (nanopub.getProvenance().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
-			resultModel.setObject("Empty provenance graph");
+			resultTextModel.setObject("Empty provenance graph");
 			return;
 		} else if (nanopub.getPubinfo().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
-			resultModel.setObject("Empty publication info graph");
+			resultTextModel.setObject("Empty publication info graph");
 			return;
 		} else if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
-			resultModel.setObject("No creators or authors found");
+			resultTextModel.setObject("No creators or authors found");
 			return;
 		} else if (nanopub.getCreationTime() == null) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
-			resultModel.setObject("No creation time found");
+			resultTextModel.setObject("No creation time found");
 			return;
 		}
-		resultModel.setObject("Congratulations, this is a valid nanopublication!");
-		resultTitleModel.setObject("Valid");
+		resultTextModel.setObject("Congratulations, this is a valid nanopublication!");
+		resultTitleModel.setObject("Valid Nanopublication");
 		resultTitleStyleModel.setObject("color:green");
 	}
 
 	void clear() {
-		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 		resultTitleModel.setObject("");
-		resultModel.setObject("");
+		resultTextModel.setObject("");
+		hashUriTitleModel.setObject("");
+		hashUriTextModel.setObject("");
+		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 	}
 
 }

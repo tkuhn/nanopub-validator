@@ -15,7 +15,8 @@
 <p>
 This unofficial validator interface for <a href="http://www.nanopub.org">nanopublications</a>
 is provided by <a href="http://www.tkuhn.ch/">Tobias Kuhn</a>.
-It is based on the <a href="https://github.com/tkuhn/nanopub-java">nanopub-java</a> library.
+It is based on the <a href="https://github.com/tkuhn/nanopub-java">nanopub-java</a> library
+and includes features from <a href="https://github.com/tkuhn/hashuri-java">hashuri-java</a>.
 It is work in progress and might contain bugs.
 </p>
 
@@ -23,11 +24,16 @@ It is work in progress and might contain bugs.
 
 <div id="tabpanel" wicket:id="tabs"></div>
 
+
 <h3><span wicket:id="resulttitle"></span></h3>
 
-<p>
-<span wicket:id="result"></span>
-</p>
+<p wicket:id="resulttext"></p>
+
+
+<h3><span wicket:id="hashurititle"></span></h3>
+
+<p wicket:id="hashuritext"></p>
+
 
 <div wicket:id="download">
 
