@@ -41,12 +41,12 @@ public class ValidatorPage extends WebPage {
 	private Model<String> hashUriTextModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> hashUriTitleModel = new Model<>("");
-	private Model<String> resultTitleStyleModel = new Model<String>();
-	private Model<String> hashUriTitleStyleModel = new Model<String>();
+	private Model<String> resultTitleStyleModel = new Model<>();
+	private Model<String> hashUriTitleStyleModel = new Model<>();
 
 	private Panel directInputPanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
-	private WebMarkupContainer downloadSection;
+	private WebMarkupContainer hashDownloadSection, downloadSection;
 
 
 	private Nanopub nanopub;
@@ -120,6 +120,15 @@ public class ValidatorPage extends WebPage {
 		add(new Label("hashuritext", hashUriTextModel));
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 
+		hashDownloadSection = new WebMarkupContainer("hashdownload");
+		hashDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		add(hashDownloadSection);
+
+		hashDownloadSection.add(new ResourceLink<Object>("trighashdownload", new HashDownloadResource(RDFFormat.TRIG, this)));
+		hashDownloadSection.add(new ResourceLink<Object>("trixhashdownload", new HashDownloadResource(RDFFormat.TRIX, this)));
+		hashDownloadSection.add(new ResourceLink<Object>("nqhashdownload", new HashDownloadResource(RDFFormat.NQUADS, this)));
+		hashDownloadSection.add(new ResourceLink<Object>("rdfjsonhashdownload", new HashDownloadResource(RDFFormat.RDFJSON, this)));
+
 		downloadSection = new WebMarkupContainer("download");
 		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 		add(downloadSection);
@@ -181,6 +190,7 @@ public class ValidatorPage extends WebPage {
 			hashUriTitleModel.setObject("No Hash-URI");
 			hashUriTitleStyleModel.setObject("color:black");
 			hashUriTextModel.setObject("This nanopublication has no hash-URI.");
+			hashDownloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (CheckNanopub.isValid(nanopub)) {
 			hashUriTitleModel.setObject("Valid Hash-URI");
 			hashUriTitleStyleModel.setObject("color:green");
@@ -228,6 +238,7 @@ public class ValidatorPage extends WebPage {
 		hashUriTitleModel.setObject("");
 		hashUriTextModel.setObject("");
 		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		hashDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 	}
 
 }

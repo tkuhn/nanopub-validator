@@ -68,11 +68,11 @@ strong {
 }
 
 .hidden {
-	visibility:hidden;
+	display:none;
 }
 
 .visible {
-	visibility:visible;
+	display:inline;
 }
 
 #tabpanel ul {
