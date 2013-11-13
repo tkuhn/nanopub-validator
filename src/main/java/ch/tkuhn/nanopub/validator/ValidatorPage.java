@@ -16,6 +16,9 @@ import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.nanopub.MalformedNanopubException;
+import org.nanopub.Nanopub;
+import org.nanopub.NanopubImpl;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -24,9 +27,6 @@ import org.openrdf.rio.RDFFormat;
 
 import ch.tkuhn.hashuri.HashUriUtils;
 import ch.tkuhn.hashuri.rdf.CheckNanopub;
-import ch.tkuhn.nanopub.MalformedNanopubException;
-import ch.tkuhn.nanopub.Nanopub;
-import ch.tkuhn.nanopub.NanopubImpl;
 
 public class ValidatorPage extends WebPage {
 

@@ -2,9 +2,8 @@ package ch.tkuhn.nanopub.validator;
 
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.resource.IResource;
+import org.nanopub.NanopubUtils;
 import org.openrdf.rio.RDFFormat;
-
-import ch.tkuhn.nanopub.NanopubUtils;
 
 public class DownloadResource implements IResource {
 
