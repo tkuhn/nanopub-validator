@@ -1,6 +1,6 @@
-Unofficial Validator for Nanopublications
-=========================================
+Validator for Nanopublications
+==============================
 
-This is an unofficial validator interface for nanopublications.
+This is a validator interface for nanopublications.
 
-http://nanopub.inn.ac
+It can be found at: http://nanopub.inn.ac
