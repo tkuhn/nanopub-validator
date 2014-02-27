@@ -6,16 +6,16 @@ import org.nanopub.Nanopub;
 import org.nanopub.NanopubUtils;
 import org.openrdf.rio.RDFFormat;
 
-import ch.tkuhn.hashuri.rdf.TransformNanopub;
+import net.trustyuri.rdf.TransformNanopub;
 
-public class HashDownloadResource implements IResource {
+public class DownloadTrustyResource implements IResource {
 
 	private static final long serialVersionUID = -4558302923207618223L;
 
 	private RDFFormat format;
 	private ValidatorPage mainPage;
 	
-	public HashDownloadResource(RDFFormat format, ValidatorPage mainPage) {
+	public DownloadTrustyResource(RDFFormat format, ValidatorPage mainPage) {
 		this.format = format;
 		this.mainPage = mainPage;
 	}
@@ -28,8 +28,8 @@ public class HashDownloadResource implements IResource {
 		resp.setAttachmentHeader("nanopub." + format.getDefaultFileExtension());
 		try {
 			Nanopub np = mainPage.getNanopub();
-			Nanopub hashNp = TransformNanopub.transform(np, np.getUri().toString());
-			NanopubUtils.writeToStream(hashNp, resp.getOutputStream(), format);
+			Nanopub trustyNp = TransformNanopub.transform(np, np.getUri().toString());
+			NanopubUtils.writeToStream(trustyNp, resp.getOutputStream(), format);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

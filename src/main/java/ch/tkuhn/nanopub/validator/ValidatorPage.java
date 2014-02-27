@@ -25,8 +25,8 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.rio.RDFFormat;
 
-import ch.tkuhn.hashuri.HashUriUtils;
-import ch.tkuhn.hashuri.rdf.CheckNanopub;
+import net.trustyuri.TrustyUriUtils;
+import net.trustyuri.rdf.CheckNanopub;
 
 public class ValidatorPage extends WebPage {
 
@@ -38,15 +38,15 @@ public class ValidatorPage extends WebPage {
 	static final int SPARQL_ENDPOINT_MODE = 4;
 
 	private Model<String> resultTextModel = new Model<>("");
-	private Model<String> hashUriTextModel = new Model<>("");
+	private Model<String> trustyUriTextModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
-	private Model<String> hashUriTitleModel = new Model<>("");
+	private Model<String> trustyUriTitleModel = new Model<>("");
 	private Model<String> resultTitleStyleModel = new Model<>();
-	private Model<String> hashUriTitleStyleModel = new Model<>();
+	private Model<String> trustyUriTitleStyleModel = new Model<>();
 
 	private Panel directInputPanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
-	private WebMarkupContainer hashDownloadSection, downloadSection;
+	private WebMarkupContainer trustyDownloadSection, downloadSection;
 
 
 	private Nanopub nanopub;
@@ -114,20 +114,20 @@ public class ValidatorPage extends WebPage {
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 		add(new Label("resulttext", resultTextModel));
 
-		Label hashUriTitle = new Label("hashurititle", hashUriTitleModel);
-		add(hashUriTitle);
-		hashUriTitle.add(new AttributeModifier("style", hashUriTitleStyleModel));
-		add(new Label("hashuritext", hashUriTextModel));
+		Label trustyUriTitle = new Label("trustyurititle", trustyUriTitleModel);
+		add(trustyUriTitle);
+		trustyUriTitle.add(new AttributeModifier("style", trustyUriTitleStyleModel));
+		add(new Label("trustyuritext", trustyUriTextModel));
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 
-		hashDownloadSection = new WebMarkupContainer("hashdownload");
-		hashDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
-		add(hashDownloadSection);
+		trustyDownloadSection = new WebMarkupContainer("trustydownload");
+		trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		add(trustyDownloadSection);
 
-		hashDownloadSection.add(new ResourceLink<Object>("trighashdownload", new HashDownloadResource(RDFFormat.TRIG, this)));
-		hashDownloadSection.add(new ResourceLink<Object>("trixhashdownload", new HashDownloadResource(RDFFormat.TRIX, this)));
-		hashDownloadSection.add(new ResourceLink<Object>("nqhashdownload", new HashDownloadResource(RDFFormat.NQUADS, this)));
-		hashDownloadSection.add(new ResourceLink<Object>("rdfjsonhashdownload", new HashDownloadResource(RDFFormat.RDFJSON, this)));
+		trustyDownloadSection.add(new ResourceLink<Object>("trigtrustydownload", new DownloadTrustyResource(RDFFormat.TRIG, this)));
+		trustyDownloadSection.add(new ResourceLink<Object>("trixtrustydownload", new DownloadTrustyResource(RDFFormat.TRIX, this)));
+		trustyDownloadSection.add(new ResourceLink<Object>("nqtrustydownload", new DownloadTrustyResource(RDFFormat.NQUADS, this)));
+		trustyDownloadSection.add(new ResourceLink<Object>("rdfjsontrustydownload", new DownloadTrustyResource(RDFFormat.RDFJSON, this)));
 
 		downloadSection = new WebMarkupContainer("download");
 		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
@@ -186,19 +186,19 @@ public class ValidatorPage extends WebPage {
 			resultTextModel.setObject(ex.getMessage());
 			return;
 		}
-		if (!HashUriUtils.isPotentialHashUri(nanopub.getUri())) {
-			hashUriTitleModel.setObject("No Hash-URI");
-			hashUriTitleStyleModel.setObject("color:black");
-			hashUriTextModel.setObject("This nanopublication has no hash-URI.");
-			hashDownloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
+		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
+			trustyUriTitleModel.setObject("No trusty URI");
+			trustyUriTitleStyleModel.setObject("color:black");
+			trustyUriTextModel.setObject("This nanopublication has no trusty URI.");
+			trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (CheckNanopub.isValid(nanopub)) {
-			hashUriTitleModel.setObject("Valid Hash-URI");
-			hashUriTitleStyleModel.setObject("color:green");
-			hashUriTextModel.setObject("This nanopublication has a valid hash-URI.");
+			trustyUriTitleModel.setObject("Valid trusty URI");
+			trustyUriTitleStyleModel.setObject("color:green");
+			trustyUriTextModel.setObject("This nanopublication has a valid trusty URI.");
 		} else {
-			hashUriTitleModel.setObject("Invalid Hash-URI");
-			hashUriTitleStyleModel.setObject("color:red");
-			hashUriTextModel.setObject("This nanopublication has an invalid hash-URI.");
+			trustyUriTitleModel.setObject("Invalid trusty URI");
+			trustyUriTitleStyleModel.setObject("color:red");
+			trustyUriTextModel.setObject("This nanopublication has an invalid trusty URI.");
 		}
 		downloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		if (nanopub.getAssertion().isEmpty()) {
@@ -235,10 +235,10 @@ public class ValidatorPage extends WebPage {
 	void clear() {
 		resultTitleModel.setObject("");
 		resultTextModel.setObject("");
-		hashUriTitleModel.setObject("");
-		hashUriTextModel.setObject("");
+		trustyUriTitleModel.setObject("");
+		trustyUriTextModel.setObject("");
 		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
-		hashDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 	}
 
 }
