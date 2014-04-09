@@ -28,7 +28,7 @@ public class DownloadTrustyResource implements IResource {
 		resp.setAttachmentHeader("nanopub." + format.getDefaultFileExtension());
 		try {
 			Nanopub np = mainPage.getNanopub();
-			Nanopub trustyNp = TransformNanopub.transform(np, np.getUri().toString());
+			Nanopub trustyNp = TransformNanopub.transform(np);
 			NanopubUtils.writeToStream(trustyNp, resp.getOutputStream(), format);
 		} catch (Exception ex) {
 			ex.printStackTrace();
