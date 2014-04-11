@@ -16,7 +16,8 @@
 This validator interface for <a href="http://www.nanopub.org">nanopublications</a>
 is provided by <a href="http://www.tkuhn.ch/">Tobias Kuhn</a>.
 It is based on the <a href="https://github.com/Nanopublication/nanopub-java">nanopub-java</a> library
-and includes features from <a href="https://github.com/trustyuri/trustyuri-java">trustyuri-java</a>.
+and uses features from <a href="https://github.com/trustyuri/trustyuri-java">trustyuri-java</a>
+for generating <a href="http://arxiv.org/abs/1401.5775">trusty URIs</a>.
 It is work in progress and might contain bugs.
 </p>
 
@@ -36,7 +37,11 @@ It is work in progress and might contain bugs.
 
 <div wicket:id="trustydownload">
 <p>
-Add a trusty URI to this nanopublication and download it as: <a wicket:id="trigtrustydownload">TriG</a>, <a wicket:id="trixtrustydownload">TriX</a>, <a wicket:id="nqtrustydownload">N-Quads</a>, <a wicket:id="rdfjsontrustydownload">RDF/JSON</a>
+Add a trusty URI to this nanopublication and download it as:
+<a wicket:id="trigtrustydownload">TriG</a>,
+<a wicket:id="trixtrustydownload">TriX</a>,
+<a wicket:id="nqtrustydownload">N-Quads</a>,
+<a wicket:id="rdfjsontrustydownload">RDF/JSON</a>
 </p>
 </div>
 
@@ -46,7 +51,11 @@ Add a trusty URI to this nanopublication and download it as: <a wicket:id="trigt
 <h3>Convert</h3>
 
 <p>
-Download nanopub as: <a wicket:id="trigdownload">TriG</a>, <a wicket:id="trixdownload">TriX</a>, <a wicket:id="nqdownload">N-Quads</a>, <a wicket:id="rdfjsondownload">RDF/JSON</a>
+Download nanopub as:
+<a wicket:id="trigdownload">TriG</a>,
+<a wicket:id="trixdownload">TriX</a>,
+<a wicket:id="nqdownload">N-Quads</a>,
+<a wicket:id="rdfjsondownload">RDF/JSON</a>
 </p>
 
 </div>

@@ -117,7 +117,7 @@ public class ValidatorPage extends WebPage {
 		Label trustyUriTitle = new Label("trustyurititle", trustyUriTitleModel);
 		add(trustyUriTitle);
 		trustyUriTitle.add(new AttributeModifier("style", trustyUriTitleStyleModel));
-		add(new Label("trustyuritext", trustyUriTextModel));
+		add(new Label("trustyuritext", trustyUriTextModel).setEscapeModelStrings(false));
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 
 		trustyDownloadSection = new WebMarkupContainer("trustydownload");
@@ -189,16 +189,16 @@ public class ValidatorPage extends WebPage {
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");
-			trustyUriTextModel.setObject("This nanopublication has no trusty URI.");
+			trustyUriTextModel.setObject("This nanopublication has no <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 			trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (CheckNanopub.isValid(nanopub)) {
 			trustyUriTitleModel.setObject("Valid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:green");
-			trustyUriTextModel.setObject("This nanopublication has a valid trusty URI.");
+			trustyUriTextModel.setObject("This nanopublication has a valid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 		} else {
 			trustyUriTitleModel.setObject("Invalid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:red");
-			trustyUriTextModel.setObject("This nanopublication has an invalid trusty URI.");
+			trustyUriTextModel.setObject("This nanopublication has an invalid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 		}
 		downloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		if (nanopub.getAssertion().isEmpty()) {
