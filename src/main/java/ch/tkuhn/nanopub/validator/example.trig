@@ -1,12 +1,12 @@
 @prefix : <http://purl.org/nanopub/examples/validator/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dc: <http://purl.org/dc/terms/> .
-@prefix pav: <http://swan.mindinformatics.org/ontologies/1.2/pav/> .
-@prefix swan: <http://purl.org/swan/1.2/swan-commons/> .
+@prefix pav: <http://purl.org/pav/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 @prefix ex: <http://example.com/> .
 
-: {
+:Head {
   : a np:Nanopublication .
   : np:hasAssertion :Ass .
   : np:hasProvenance :Prov .
@@ -14,14 +14,14 @@
 }
 
 :Ass {
-    ex:mosquito ex:transmits ex:malaria .
+  ex:mosquito ex:transmits ex:malaria .
 }
 
 :Prov {
-    : swan:citesAsSupportiveEvidence <http://dx.doi.org/10.3233/ISU-2010-0613> .
+  :Ass prov:hadPrimarySource <http://dx.doi.org/10.3233/ISU-2010-0613> .
 }
 
 :Info {
-  : pav:authoredBy <http://orcid.org/0000-0002-1267-0234> .
+  : pav:createdBy <http://orcid.org/0000-0002-1267-0234> .
   : dc:created "2013-10-02T10:47:11+01:00"^^xsd:dateTime .
 }
