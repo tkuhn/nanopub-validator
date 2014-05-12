@@ -201,22 +201,23 @@ public class ValidatorPage extends WebPage {
 			trustyUriTextModel.setObject("This nanopublication has an invalid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 		}
 		downloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
-		if (nanopub.getAssertion().isEmpty()) {
-			resultTitleModel.setObject("Warning");
-			resultTitleStyleModel.setObject("color:orange");
-			resultTextModel.setObject("Empty assertion graph");
-			return;
-		} else if (nanopub.getProvenance().isEmpty()) {
-			resultTitleModel.setObject("Warning");
-			resultTitleStyleModel.setObject("color:orange");
-			resultTextModel.setObject("Empty provenance graph");
-			return;
-		} else if (nanopub.getPubinfo().isEmpty()) {
-			resultTitleModel.setObject("Warning");
-			resultTitleStyleModel.setObject("color:orange");
-			resultTextModel.setObject("Empty publication info graph");
-			return;
-		} else if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
+//		if (nanopub.getAssertion().isEmpty()) {
+//			resultTitleModel.setObject("Warning");
+//			resultTitleStyleModel.setObject("color:orange");
+//			resultTextModel.setObject("Empty assertion graph");
+//			return;
+//		} else if (nanopub.getProvenance().isEmpty()) {
+//			resultTitleModel.setObject("Warning");
+//			resultTitleStyleModel.setObject("color:orange");
+//			resultTextModel.setObject("Empty provenance graph");
+//			return;
+//		} else if (nanopub.getPubinfo().isEmpty()) {
+//			resultTitleModel.setObject("Warning");
+//			resultTitleStyleModel.setObject("color:orange");
+//			resultTextModel.setObject("Empty publication info graph");
+//			return;
+//		}
+		if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
 			resultTextModel.setObject("No creators or authors found");

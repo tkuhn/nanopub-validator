@@ -8,17 +8,17 @@
 
 :Head {
   : a np:Nanopublication .
-  : np:hasAssertion :Ass .
+  : np:hasAssertion :Assert .
   : np:hasProvenance :Prov .
   : np:hasPublicationInfo :Info .
 }
 
-:Ass {
+:Assert {
   ex:mosquito ex:transmits ex:malaria .
 }
 
 :Prov {
-  :Ass prov:hadPrimarySource <http://dx.doi.org/10.3233/ISU-2010-0613> .
+  :Assert prov:hadPrimarySource <http://dx.doi.org/10.3233/ISU-2010-0613> .
 }
 
 :Info {
