@@ -240,6 +240,7 @@ public class ValidatorPage extends WebPage {
 	}
 
 	void clear() {
+		nanopub = null;
 		resultTitleModel.setObject("");
 		resultTextModel.setObject("");
 		trustyUriTitleModel.setObject("");

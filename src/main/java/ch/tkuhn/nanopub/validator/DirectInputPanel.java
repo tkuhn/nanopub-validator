@@ -58,6 +58,7 @@ public class DirectInputPanel extends Panel {
 			    inputTextModel.setObject(s.hasNext() ? s.next() : "");
 			    s.close();
 				selectedFormat = "TriG";
+				page.clear();
 			}
 
 		} );

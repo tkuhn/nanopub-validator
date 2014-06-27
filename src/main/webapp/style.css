@@ -19,7 +19,7 @@ table {
 }
 
 p {
-	max-width: 750px;
+	max-width: 120ex;
 }
 
 ul {
@@ -76,6 +76,7 @@ strong {
 }
 
 #tabpanel {
+	padding: 20px 0 0 0;
 	white-space: nowrap;
 }
 
@@ -110,5 +111,5 @@ strong {
 	border-width: 1px;
 	padding: 0.3em 1em 0 1em;
 	background: #eee;
-	min-width:120ex;
+	min-width: 120ex;
 }
