@@ -198,6 +198,7 @@ public class ValidatorPage extends WebPage {
 	}
 
 	public void setNanopub(Nanopub nanopub, RDFFormat format, boolean refreshDirectInput) {
+		clear();
 		this.nanopub = nanopub;
 		if (format != null) {
 			this.format = format;
