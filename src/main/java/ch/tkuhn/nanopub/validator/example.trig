@@ -1,27 +1,27 @@
-@prefix : <http://purl.org/nanopub/examples/validator/> .
+@prefix : <http://example.org/nanopub-validator-example#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix pav: <http://purl.org/pav/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix np: <http://www.nanopub.org/nschema#> .
-@prefix ex: <http://example.com/> .
+@prefix ex: <http://example.org/> .
 
 :Head {
   : a np:Nanopublication .
-  : np:hasAssertion :Assert .
-  : np:hasProvenance :Prov .
-  : np:hasPublicationInfo :Info .
+  : np:hasAssertion :assertion .
+  : np:hasProvenance :provenance .
+  : np:hasPublicationInfo :pubinfo .
 }
 
-:Assert {
+:assertion {
   ex:mosquito ex:transmits ex:malaria .
 }
 
-:Prov {
-  :Assert prov:hadPrimarySource <http://dx.doi.org/10.3233/ISU-2010-0613> .
+:provenance {
+  :assertion prov:hadPrimarySource <http://dx.doi.org/10.3233/ISU-2010-0613> .
 }
 
-:Info {
+:pubinfo {
   : pav:createdBy <http://orcid.org/0000-0002-1267-0234> .
   : dc:created "2013-10-02T10:47:11+01:00"^^xsd:dateTime .
 }
