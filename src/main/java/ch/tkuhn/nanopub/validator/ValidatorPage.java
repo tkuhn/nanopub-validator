@@ -47,7 +47,7 @@ public class ValidatorPage extends WebPage {
 	private DirectInputPanel directInputPanel;
 	private Panel fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
-	private WebMarkupContainer trustyDownloadSection, downloadSection;
+	private WebMarkupContainer trustyDownloadSection, actionBox;
 
 	private TabbedPanel<ITab> tabbedPanel;
 
@@ -122,21 +122,21 @@ public class ValidatorPage extends WebPage {
 		add(new Label("trustyuritext", trustyUriTextModel).setEscapeModelStrings(false));
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 
+		actionBox = new WebMarkupContainer("actions");
+		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
+		add(actionBox);
+
+		actionBox.add(new ResourceLink<Object>("trigdownload", new DownloadResource(RDFFormat.TRIG, this)));
+		actionBox.add(new ResourceLink<Object>("trixdownload", new DownloadResource(RDFFormat.TRIX, this)));
+		actionBox.add(new ResourceLink<Object>("nqdownload", new DownloadResource(RDFFormat.NQUADS, this)));
+
 		trustyDownloadSection = new WebMarkupContainer("trustydownload");
 		trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
-		add(trustyDownloadSection);
+		actionBox.add(trustyDownloadSection);
 
 		trustyDownloadSection.add(new ResourceLink<Object>("trigtrustydownload", new DownloadTrustyResource(RDFFormat.TRIG, this)));
 		trustyDownloadSection.add(new ResourceLink<Object>("trixtrustydownload", new DownloadTrustyResource(RDFFormat.TRIX, this)));
 		trustyDownloadSection.add(new ResourceLink<Object>("nqtrustydownload", new DownloadTrustyResource(RDFFormat.NQUADS, this)));
-
-		downloadSection = new WebMarkupContainer("download");
-		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
-		add(downloadSection);
-
-		downloadSection.add(new ResourceLink<Object>("trigdownload", new DownloadResource(RDFFormat.TRIG, this)));
-		downloadSection.add(new ResourceLink<Object>("trixdownload", new DownloadResource(RDFFormat.TRIX, this)));
-		downloadSection.add(new ResourceLink<Object>("nqdownload", new DownloadResource(RDFFormat.NQUADS, this)));
     }
 
 	Nanopub getNanopub() {
@@ -206,7 +206,7 @@ public class ValidatorPage extends WebPage {
 			trustyUriTitleStyleModel.setObject("color:red");
 			trustyUriTextModel.setObject("This nanopublication has an invalid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 		}
-		downloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
+		actionBox.add(new AttributeModifier("class", new Model<String>("visible")));
 //		if (nanopub.getAssertion().isEmpty()) {
 //			resultTitleModel.setObject("Warning");
 //			resultTitleStyleModel.setObject("color:orange");
@@ -245,7 +245,7 @@ public class ValidatorPage extends WebPage {
 		resultTextModel.setObject("");
 		trustyUriTitleModel.setObject("");
 		trustyUriTextModel.setObject("");
-		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
 		trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 	}
 
