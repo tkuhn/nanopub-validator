@@ -75,6 +75,10 @@ strong {
 	display:inline;
 }
 
+#tabpanel {
+	white-space: nowrap;
+}
+
 #tabpanel ul {
 	list-style: none;
 	padding: 0;
@@ -92,7 +96,7 @@ strong {
 }
 
 #tabpanel li a {
-	padding: 0 1em;
+	padding: 0 0.5em;
 }
 
 #tabpanel li.selected {
@@ -106,4 +110,5 @@ strong {
 	border-width: 1px;
 	padding: 0.3em 1em 0 1em;
 	background: #eee;
+	min-width:120ex;
 }
