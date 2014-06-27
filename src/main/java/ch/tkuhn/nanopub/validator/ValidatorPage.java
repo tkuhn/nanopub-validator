@@ -1,6 +1,8 @@
 package ch.tkuhn.nanopub.validator;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -186,10 +188,25 @@ public class ValidatorPage extends WebPage {
 			resultTitleStyleModel.setObject("color:red");
 			resultTextModel.setObject(ex.getMessage());
 			return;
+		} catch (MalformedURLException ex) {
+			resultTitleModel.setObject("Malformed URL");
+			resultTitleStyleModel.setObject("color:red");
+			resultTextModel.setObject(ex.getMessage());
+			return;
+		} catch (IOException ex) {
+			resultTitleModel.setObject("Failed to Read Nanopublication");
+			resultTitleStyleModel.setObject("color:red");
+			resultTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
+			return;
+		} catch (IllegalArgumentException ex) {
+			resultTitleModel.setObject("Illegal Argument");
+			resultTitleStyleModel.setObject("color:red");
+			resultTextModel.setObject(ex.getMessage());
+			return;
 		} catch (Exception ex) {
 			resultTitleModel.setObject("Unexpected Error");
 			resultTitleStyleModel.setObject("color:black");
-			resultTextModel.setObject(ex.getMessage());
+			resultTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
 			return;
 		}
 		setNanopub(nanopub, mode != DIRECT_INPUT_MODE);
