@@ -67,15 +67,32 @@ public class DirectInputPanel extends Panel {
 	}
 
 	public void setNanopub(Nanopub np) {
+		setNanopub(np, null);
+	}
+
+	public void setNanopub(Nanopub np, RDFFormat format) {
+		if (format == null) {
+			format = RDFFormat.TRIG;
+		}
+		setFormat(format);
 		try {
-			inputTextModel.setObject(NanopubUtils.writeToString(np, RDFFormat.TRIG));
+			inputTextModel.setObject(NanopubUtils.writeToString(np, format));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		formatModel.setObject("TriG");
 	}
 
-	private RDFFormat getFormat() {
+	protected void setFormat(RDFFormat format) {
+		if (format.equals(RDFFormat.TRIG)) {
+			formatModel.setObject("TriG");
+		} else if (format.equals(RDFFormat.TRIX)) {
+			formatModel.setObject("TriX");
+		} else if (format.equals(RDFFormat.NQUADS)) {
+			formatModel.setObject("N-Quads");
+		}
+	}
+
+	protected RDFFormat getFormat() {
 		if (selectedFormat.equals("TriG")) {
 			return RDFFormat.TRIG;
 		} else if (selectedFormat.equals("TriX")) {

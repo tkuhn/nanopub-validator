@@ -47,11 +47,12 @@ public class ValidatorPage extends WebPage {
 	private DirectInputPanel directInputPanel;
 	private Panel fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
-	private WebMarkupContainer trustyDownloadSection, actionBox;
+	private WebMarkupContainer trustySection, actionBox;
 
 	private TabbedPanel<ITab> tabbedPanel;
 
 	private Nanopub nanopub;
+	private RDFFormat format;
 
 	public ValidatorPage(final PageParameters parameters) {
 		super(parameters);
@@ -126,17 +127,19 @@ public class ValidatorPage extends WebPage {
 		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
 		add(actionBox);
 
+		actionBox.add(new Convert("trigconvert", RDFFormat.TRIG, this));
+		actionBox.add(new Convert("trixconvert", RDFFormat.TRIX, this));
+		actionBox.add(new Convert("nqconvert", RDFFormat.NQUADS, this));
+
 		actionBox.add(new ResourceLink<Object>("trigdownload", new DownloadResource(RDFFormat.TRIG, this)));
 		actionBox.add(new ResourceLink<Object>("trixdownload", new DownloadResource(RDFFormat.TRIX, this)));
 		actionBox.add(new ResourceLink<Object>("nqdownload", new DownloadResource(RDFFormat.NQUADS, this)));
 
-		trustyDownloadSection = new WebMarkupContainer("trustydownload");
-		trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
-		actionBox.add(trustyDownloadSection);
+		trustySection = new WebMarkupContainer("trustyaction");
+		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		actionBox.add(trustySection);
 
-		trustyDownloadSection.add(new ResourceLink<Object>("trigtrustydownload", new DownloadTrustyResource(RDFFormat.TRIG, this)));
-		trustyDownloadSection.add(new ResourceLink<Object>("trixtrustydownload", new DownloadTrustyResource(RDFFormat.TRIX, this)));
-		trustyDownloadSection.add(new ResourceLink<Object>("nqtrustydownload", new DownloadTrustyResource(RDFFormat.NQUADS, this)));
+		trustySection.add(new MakeTrusty("maketrusty", this));
     }
 
 	Nanopub getNanopub() {
@@ -144,7 +147,7 @@ public class ValidatorPage extends WebPage {
 	}
 
 	void showResult(int mode, Object... objs) {
-		nanopub = null;
+		Nanopub nanopub = null;
 		clear();
 
 		try {
@@ -156,7 +159,8 @@ public class ValidatorPage extends WebPage {
 					resultTextModel.setObject("");
 					return;
 				}
-				nanopub = new NanopubImpl(inputText, (RDFFormat) objs[1]);
+				format = (RDFFormat) objs[1];
+				nanopub = new NanopubImpl(inputText, format);
 			} else if (mode == FILE_UPLOAD_MODE) {
 				File file = (File) objs[0];
 				nanopub = new NanopubImpl(file);
@@ -186,17 +190,30 @@ public class ValidatorPage extends WebPage {
 			resultTextModel.setObject(ex.getMessage());
 			return;
 		}
+		setNanopub(nanopub, mode != DIRECT_INPUT_MODE);
+	}
 
-		if (mode != DIRECT_INPUT_MODE) {
+	public void setNanopub(Nanopub nanopub, boolean refreshDirectInput) {
+		setNanopub(nanopub, null, refreshDirectInput);
+	}
+
+	public void setNanopub(Nanopub nanopub, RDFFormat format, boolean refreshDirectInput) {
+		this.nanopub = nanopub;
+		if (format != null) {
+			this.format = format;
+		} else {
+			format = this.format;
+		}
+		if (refreshDirectInput) {
 			tabbedPanel.setSelectedTab(0);
-			directInputPanel.setNanopub(nanopub);
+			directInputPanel.setNanopub(nanopub, format);
 		}
 
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");
 			trustyUriTextModel.setObject("This nanopublication has no <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
-			trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("visible")));
+			trustySection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (CheckNanopub.isValid(nanopub)) {
 			trustyUriTitleModel.setObject("Valid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:green");
@@ -207,22 +224,6 @@ public class ValidatorPage extends WebPage {
 			trustyUriTextModel.setObject("This nanopublication has an invalid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 		}
 		actionBox.add(new AttributeModifier("class", new Model<String>("visible")));
-//		if (nanopub.getAssertion().isEmpty()) {
-//			resultTitleModel.setObject("Warning");
-//			resultTitleStyleModel.setObject("color:orange");
-//			resultTextModel.setObject("Empty assertion graph");
-//			return;
-//		} else if (nanopub.getProvenance().isEmpty()) {
-//			resultTitleModel.setObject("Warning");
-//			resultTitleStyleModel.setObject("color:orange");
-//			resultTextModel.setObject("Empty provenance graph");
-//			return;
-//		} else if (nanopub.getPubinfo().isEmpty()) {
-//			resultTitleModel.setObject("Warning");
-//			resultTitleStyleModel.setObject("color:orange");
-//			resultTextModel.setObject("Empty publication info graph");
-//			return;
-//		}
 		if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
@@ -246,7 +247,7 @@ public class ValidatorPage extends WebPage {
 		trustyUriTitleModel.setObject("");
 		trustyUriTextModel.setObject("");
 		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
-		trustyDownloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
 	}
 
 }
