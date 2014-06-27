@@ -12,6 +12,8 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.nanopub.Nanopub;
+import org.nanopub.NanopubUtils;
 import org.openrdf.rio.RDFFormat;
 
 public class DirectInputPanel extends Panel {
@@ -61,6 +63,15 @@ public class DirectInputPanel extends Panel {
 		} );
 		form.add(new TextArea<String>("nanopubtext", inputTextModel));
 		form.add(new RadioChoice<String>("format", formatModel, FORMATS).setSuffix("&nbsp;"));
+	}
+
+	public void setNanopub(Nanopub np) {
+		try {
+			inputTextModel.setObject(NanopubUtils.writeToString(np, RDFFormat.TRIG));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		formatModel.setObject("TriG");
 	}
 
 	private RDFFormat getFormat() {

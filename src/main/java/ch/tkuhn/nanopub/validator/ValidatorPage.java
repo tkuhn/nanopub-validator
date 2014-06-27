@@ -5,6 +5,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.trustyuri.TrustyUriUtils;
+import net.trustyuri.rdf.CheckNanopub;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -25,9 +28,6 @@ import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.sparql.SPARQLRepository;
 import org.openrdf.rio.RDFFormat;
 
-import net.trustyuri.TrustyUriUtils;
-import net.trustyuri.rdf.CheckNanopub;
-
 public class ValidatorPage extends WebPage {
 
 	private static final long serialVersionUID = -8749816277274862810L;
@@ -44,10 +44,12 @@ public class ValidatorPage extends WebPage {
 	private Model<String> resultTitleStyleModel = new Model<>();
 	private Model<String> trustyUriTitleStyleModel = new Model<>();
 
-	private Panel directInputPanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
+	private DirectInputPanel directInputPanel;
+	private Panel fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
 	private WebMarkupContainer trustyDownloadSection, downloadSection;
 
+	private TabbedPanel<ITab> tabbedPanel;
 
 	private Nanopub nanopub;
 
@@ -107,7 +109,7 @@ public class ValidatorPage extends WebPage {
 
 		});
 
-		add(new TabbedPanel<ITab>("tabs", tabs));
+		add(tabbedPanel = new TabbedPanel<ITab>("tabs", tabs));
 
 		Label resultTitle = new Label("resulttitle", resultTitleModel);
 		add(resultTitle);
@@ -186,6 +188,12 @@ public class ValidatorPage extends WebPage {
 			resultTextModel.setObject(ex.getMessage());
 			return;
 		}
+
+		if (mode != DIRECT_INPUT_MODE) {
+			tabbedPanel.setSelectedTab(0);
+			directInputPanel.setNanopub(nanopub);
+		}
+
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");
