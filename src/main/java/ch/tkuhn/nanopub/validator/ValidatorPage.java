@@ -9,6 +9,7 @@ import java.util.List;
 
 import net.trustyuri.TrustyUriUtils;
 import net.trustyuri.rdf.CheckNanopub;
+import net.trustyuri.rdf.RdfModule;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
@@ -38,6 +39,14 @@ public class ValidatorPage extends WebPage {
 	static final int FILE_UPLOAD_MODE = 2;
 	static final int URL_MODE = 3;
 	static final int SPARQL_ENDPOINT_MODE = 4;
+	static final int TRUSTY_URI_MODE = 5;
+
+	private static final List<String> nanopubServers = new ArrayList<>();
+
+	static {
+		nanopubServers.add("http://np.inn.ac/");
+		nanopubServers.add("http://localhost:8080/nanopub-server/");
+	}
 
 	private Model<String> resultTextModel = new Model<>("");
 	private Model<String> trustyUriTextModel = new Model<>("");
@@ -47,7 +56,7 @@ public class ValidatorPage extends WebPage {
 	private Model<String> trustyUriTitleStyleModel = new Model<>();
 
 	private DirectInputPanel directInputPanel;
-	private Panel fileUploadPanel, urlPanel, sparqlEndpointPanel;
+	private Panel fileUploadPanel, urlPanel, sparqlEndpointPanel, trustyUriPanel;
 
 	private WebMarkupContainer trustySection, actionBox;
 
@@ -86,7 +95,7 @@ public class ValidatorPage extends WebPage {
 
 		});
 
-		tabs.add(new AbstractTab(new Model<String>("URL")) {
+		tabs.add(new AbstractTab(new Model<String>("from URL")) {
 
 			private static final long serialVersionUID = 2645031269099631888L;
 
@@ -99,7 +108,7 @@ public class ValidatorPage extends WebPage {
 
 		});
 
-		tabs.add(new AbstractTab(new Model<String>("SPARQL Endpoint")) {
+		tabs.add(new AbstractTab(new Model<String>("from SPARQL Endpoint")) {
 
 			private static final long serialVersionUID = 5357887346654745284L;
 
@@ -108,6 +117,19 @@ public class ValidatorPage extends WebPage {
 					sparqlEndpointPanel = new SparqlEndpointPanel(panelId, ValidatorPage.this);
 				}
 				return sparqlEndpointPanel;
+			}
+
+		});
+
+		tabs.add(new AbstractTab(new Model<String>("from Trusty URI")) {
+
+			private static final long serialVersionUID = -976569935347713558L;
+
+			public Panel getPanel(String panelId) {
+				if (trustyUriPanel == null) {
+					trustyUriPanel = new TrustyUriPanel(panelId, ValidatorPage.this);
+				}
+				return trustyUriPanel;
 			}
 
 		});
@@ -177,6 +199,36 @@ public class ValidatorPage extends WebPage {
 				sr.initialize();
 				nanopub = new NanopubImpl(sr, nanopubUri);
 				sr.shutDown();
+			} else if (mode == TRUSTY_URI_MODE) {
+				String text = (String) objs[0];
+				String ac;
+				if (text.indexOf(":") > 0) {
+					URI uri = new URIImpl(text);
+					if (!TrustyUriUtils.isPotentialTrustyUri(uri)) {
+						throw new IllegalArgumentException("Not a well-formed trusty URI");
+					}
+					ac = TrustyUriUtils.getArtifactCode(uri.toString());
+				} else {
+					ac = text;
+					if (!TrustyUriUtils.isPotentialTrustyUri(new URIImpl("http://example.org/" + ac))) {
+						throw new IllegalArgumentException("Not a well-formed artifact code");
+					}
+				}
+				if (!ac.startsWith(RdfModule.MODULE_ID)) {
+					throw new IllegalArgumentException("Not a trusty URI of type RA");
+				}
+				for (String nps : nanopubServers) {
+					try {
+						URL url = new URL(nps + ac);
+						System.err.println("TRYING " + url);
+						nanopub = new NanopubImpl(url);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+				if (nanopub == null) {
+					throw new IOException("Couldn't find nanopub");
+				}
 			}
 		} catch (OpenRDFException ex) {
 			resultTitleModel.setObject("Invalid Nanopublication");
