@@ -21,6 +21,13 @@ public class DownloadResource implements IResource {
 	public void respond(Attributes attributes) {
 		if (mainPage.getNanopub() == null) return;
 		WebResponse resp = (WebResponse) attributes.getResponse();
+		RDFFormat format = this.format;
+		if (format == null) {
+			format = mainPage.getFormat();
+		}
+		if (format == null) {
+			format = RDFFormat.TRIG;
+		}
 		resp.setContentType(format.getMIMETypes().get(0));
 		resp.setAttachmentHeader("nanopub." + format.getDefaultFileExtension());
 		try {

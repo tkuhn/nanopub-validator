@@ -131,9 +131,7 @@ public class ValidatorPage extends WebPage {
 		actionBox.add(new Convert("trixconvert", RDFFormat.TRIX, this));
 		actionBox.add(new Convert("nqconvert", RDFFormat.NQUADS, this));
 
-		actionBox.add(new ResourceLink<Object>("trigdownload", new DownloadResource(RDFFormat.TRIG, this)));
-		actionBox.add(new ResourceLink<Object>("trixdownload", new DownloadResource(RDFFormat.TRIX, this)));
-		actionBox.add(new ResourceLink<Object>("nqdownload", new DownloadResource(RDFFormat.NQUADS, this)));
+		actionBox.add(new ResourceLink<Object>("download", new DownloadResource(format, this)));
 
 		trustySection = new WebMarkupContainer("trustyaction");
 		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
@@ -144,6 +142,10 @@ public class ValidatorPage extends WebPage {
 
 	Nanopub getNanopub() {
 		return nanopub;
+	}
+
+	RDFFormat getFormat() {
+		return format;
 	}
 
 	void showResult(int mode, Object... objs) {

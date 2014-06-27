@@ -19,7 +19,7 @@ table {
 }
 
 p {
-	max-width: 120ex;
+	width: 1000px;
 }
 
 ul {
@@ -60,7 +60,6 @@ a.button {
 	font-size: 10pt;
 	padding: 2px 10px;
 	margin: 3px;
-	box-shadow: 0 0 5px rgba(0,0,0,.1);
 	background-color: #66d;
 	color: #fff;
 	font-weight: bold;
@@ -126,8 +125,7 @@ strong {
 	border-width: 1px;
 	padding: 0.3em 1em 0 1em;
 	background: #eee;
-	width: 120ex;
-	min-width: 120ex;
+	width: 1000px;
 }
 
 .actionbox {
@@ -138,4 +136,17 @@ strong {
 	padding: 1em;
 	margin-top: 4ex;
 	background: #eee;
+}
+
+textarea {
+	width: 980px;
+}
+
+input.textfield {
+	width: 980px;
+	margin-bottom: 5px;
+}
+
+.separator {
+	margin: 10px;
 }
