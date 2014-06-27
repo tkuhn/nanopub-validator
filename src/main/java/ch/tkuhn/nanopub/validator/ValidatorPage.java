@@ -129,7 +129,6 @@ public class ValidatorPage extends WebPage {
 		trustyDownloadSection.add(new ResourceLink<Object>("trigtrustydownload", new DownloadTrustyResource(RDFFormat.TRIG, this)));
 		trustyDownloadSection.add(new ResourceLink<Object>("trixtrustydownload", new DownloadTrustyResource(RDFFormat.TRIX, this)));
 		trustyDownloadSection.add(new ResourceLink<Object>("nqtrustydownload", new DownloadTrustyResource(RDFFormat.NQUADS, this)));
-		trustyDownloadSection.add(new ResourceLink<Object>("rdfjsontrustydownload", new DownloadTrustyResource(RDFFormat.RDFJSON, this)));
 
 		downloadSection = new WebMarkupContainer("download");
 		downloadSection.add(new AttributeModifier("class", new Model<String>("hidden")));
@@ -138,7 +137,6 @@ public class ValidatorPage extends WebPage {
 		downloadSection.add(new ResourceLink<Object>("trigdownload", new DownloadResource(RDFFormat.TRIG, this)));
 		downloadSection.add(new ResourceLink<Object>("trixdownload", new DownloadResource(RDFFormat.TRIX, this)));
 		downloadSection.add(new ResourceLink<Object>("nqdownload", new DownloadResource(RDFFormat.NQUADS, this)));
-		downloadSection.add(new ResourceLink<Object>("rdfjsondownload", new DownloadResource(RDFFormat.RDFJSON, this)));
     }
 
 	Nanopub getNanopub() {

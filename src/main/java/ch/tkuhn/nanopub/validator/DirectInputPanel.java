@@ -20,7 +20,7 @@ public class DirectInputPanel extends Panel {
 
 	private static final long serialVersionUID = 5672448402585463667L;
 
-	private static final List<String> FORMATS = Arrays.asList(new String[] { "TriG", "TriX", "N-Quads", "RDF/JSON" });
+	private static final List<String> FORMATS = Arrays.asList(new String[] { "TriG", "TriX", "N-Quads" });
 	private String selectedFormat = "TriG";
 
 	private Model<String> inputTextModel = new Model<>("");
@@ -81,8 +81,6 @@ public class DirectInputPanel extends Panel {
 			return RDFFormat.TRIX;
 		} else if (selectedFormat.equals("N-Quads")) {
 			return RDFFormat.NQUADS;
-		} else if (selectedFormat.equals("RDF/JSON")) {
-			return RDFFormat.RDFJSON;
 		}
 		return null;
 	}
