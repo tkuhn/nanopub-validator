@@ -11,6 +11,7 @@ import net.trustyuri.TrustyUriUtils;
 import net.trustyuri.rdf.CheckNanopub;
 import net.trustyuri.rdf.RdfModule;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -49,7 +50,9 @@ public class ValidatorPage extends WebPage {
 
 	static {
 		nanopubServers.add("http://np.inn.ac/");
-		nanopubServers.add("http://localhost:8080/nanopub-server/");
+		if (Application.get().usesDevelopmentConfig()) {
+			nanopubServers.add("http://localhost:8080/nanopub-server/");
+		}
 	}
 
 	private Model<String> messageTextModel = new Model<>("");
