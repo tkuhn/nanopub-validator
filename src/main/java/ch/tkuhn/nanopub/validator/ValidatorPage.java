@@ -240,7 +240,10 @@ public class ValidatorPage extends WebPage {
 						URL url = new URL(nps + ac);
 						System.err.println("TRYING " + url);
 						nanopub = new NanopubImpl(url);
-						messageText = "Loaded by trusty URI from nanopub server " + nps + ".";
+						if (CheckNanopub.isValid(nanopub)) {
+							messageText = "Loaded by trusty URI from nanopub server " + nps + ".";
+							break;
+						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
