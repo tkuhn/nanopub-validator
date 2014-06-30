@@ -249,7 +249,7 @@ public class ValidatorPage extends WebPage {
 					}
 				}
 				if (nanopub == null) {
-					throw new IOException("Couldn't find nanopub");
+					throw new IOException("Couldn't find nanopublication");
 				}
 			}
 		} catch (OpenRDFException ex) {
@@ -308,7 +308,7 @@ public class ValidatorPage extends WebPage {
 			directInputPanel.setNanopub(nanopub, format);
 		}
 
-		messageTitleModel.setObject("Nanopub " + nanopub.getUri());
+		messageTitleModel.setObject("Nanopublication " + nanopub.getUri());
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");

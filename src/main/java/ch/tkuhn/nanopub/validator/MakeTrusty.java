@@ -19,7 +19,7 @@ public class MakeTrusty extends Link<Object> {
 	public void onClick() {
 		try {
 			mainPage.setNanopub(TransformNanopub.transform(mainPage.getNanopub()), ValidatorPage.MADE_TRUSTY);
-			mainPage.setMessageText("Transformed to a nanopub with a trusty URI.");
+			mainPage.setMessageText("Transformed to a nanopublication with a trusty URI.");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
