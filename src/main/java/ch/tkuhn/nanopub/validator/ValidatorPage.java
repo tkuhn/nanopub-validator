@@ -41,6 +41,10 @@ public class ValidatorPage extends WebPage {
 	static final int SPARQL_ENDPOINT_MODE = 4;
 	static final int TRUSTY_URI_MODE = 5;
 
+	static final int MADE_TRUSTY = 11;
+	static final int CONVERTED = 12;
+
+
 	private static final List<String> nanopubServers = new ArrayList<>();
 
 	static {
@@ -48,8 +52,10 @@ public class ValidatorPage extends WebPage {
 		nanopubServers.add("http://localhost:8080/nanopub-server/");
 	}
 
+	private Model<String> messageTextModel = new Model<>("");
 	private Model<String> resultTextModel = new Model<>("");
 	private Model<String> trustyUriTextModel = new Model<>("");
+	private Model<String> messageTitleModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> trustyUriTitleModel = new Model<>("");
 	private Model<String> resultTitleStyleModel = new Model<>();
@@ -147,6 +153,9 @@ public class ValidatorPage extends WebPage {
 		add(new Label("trustyuritext", trustyUriTextModel).setEscapeModelStrings(false));
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 
+		add(new Label("messagetitle", messageTitleModel));
+		add(new Label("messagetext", messageTextModel));
+
 		actionBox = new WebMarkupContainer("actions");
 		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
 		add(actionBox);
@@ -175,6 +184,7 @@ public class ValidatorPage extends WebPage {
 	void showResult(int mode, Object... objs) {
 		Nanopub nanopub = null;
 		clear();
+		String messageText = null;
 
 		try {
 			if (mode == DIRECT_INPUT_MODE) {
@@ -187,18 +197,23 @@ public class ValidatorPage extends WebPage {
 				}
 				format = (RDFFormat) objs[1];
 				nanopub = new NanopubImpl(inputText, format);
+				messageText = "Loaded from direct input.";
 			} else if (mode == FILE_UPLOAD_MODE) {
 				File file = (File) objs[0];
 				nanopub = new NanopubImpl(file);
+				messageText = "Loaded from file " + file.getName() + ".";
 			} else if (mode == URL_MODE) {
 				URL url = new URL((String) objs[0]);
 				nanopub = new NanopubImpl(url);
+				messageText = "Loaded from URL " + url + ".";
 			} else if (mode == SPARQL_ENDPOINT_MODE) {
-				SPARQLRepository sr = new SPARQLRepository((String) objs[0]);
+				String sparqlEndpointUrl = (String) objs[0];
+				SPARQLRepository sr = new SPARQLRepository(sparqlEndpointUrl);
 				URI nanopubUri = new URIImpl((String) objs[1]);
 				sr.initialize();
 				nanopub = new NanopubImpl(sr, nanopubUri);
 				sr.shutDown();
+				messageText = "Loaded from SPARQL endpoint " + sparqlEndpointUrl + ".";
 			} else if (mode == TRUSTY_URI_MODE) {
 				String text = (String) objs[0];
 				String ac;
@@ -222,6 +237,7 @@ public class ValidatorPage extends WebPage {
 						URL url = new URL(nps + ac);
 						System.err.println("TRYING " + url);
 						nanopub = new NanopubImpl(url);
+						messageText = "Loaded by trusty URI from nanopub server " + nps + ".";
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -261,14 +277,19 @@ public class ValidatorPage extends WebPage {
 			resultTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
 			return;
 		}
-		setNanopub(nanopub, mode != DIRECT_INPUT_MODE);
+		setNanopub(nanopub, mode);
+		setMessageText(messageText);
 	}
 
-	public void setNanopub(Nanopub nanopub, boolean refreshDirectInput) {
-		setNanopub(nanopub, null, refreshDirectInput);
+	public void setMessageText(String messageText) {
+		messageTextModel.setObject(messageText);
 	}
 
-	public void setNanopub(Nanopub nanopub, RDFFormat format, boolean refreshDirectInput) {
+	public void setNanopub(Nanopub nanopub, int mode) {
+		setNanopub(nanopub, null, mode);
+	}
+
+	public void setNanopub(Nanopub nanopub, RDFFormat format, int mode) {
 		clear();
 		this.nanopub = nanopub;
 		if (format != null) {
@@ -276,11 +297,12 @@ public class ValidatorPage extends WebPage {
 		} else {
 			format = this.format;
 		}
-		if (refreshDirectInput) {
+		if (mode != DIRECT_INPUT_MODE) {
 			tabbedPanel.setSelectedTab(0);
 			directInputPanel.setNanopub(nanopub, format);
 		}
 
+		messageTitleModel.setObject("Nanopub " + nanopub.getUri());
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");
@@ -314,6 +336,8 @@ public class ValidatorPage extends WebPage {
 
 	void clear() {
 		nanopub = null;
+		messageTitleModel.setObject("");
+		messageTextModel.setObject("");
 		resultTitleModel.setObject("");
 		resultTextModel.setObject("");
 		trustyUriTitleModel.setObject("");

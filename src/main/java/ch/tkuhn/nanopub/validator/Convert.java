@@ -19,7 +19,12 @@ public class Convert extends Link<Object> {
 	@Override
 	public void onClick() {
 		try {
-			mainPage.setNanopub(mainPage.getNanopub(), format, true);
+			String initialFormatName = "(unknown)";
+			if (mainPage.getFormat() != null) {
+				initialFormatName = mainPage.getFormat().getName();
+			}
+			mainPage.setNanopub(mainPage.getNanopub(), format, ValidatorPage.CONVERTED);
+			mainPage.setMessageText("Converted from " + initialFormatName + ".");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
