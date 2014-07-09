@@ -1,8 +1,7 @@
 package ch.tkuhn.nanopub.validator;
 
-import net.trustyuri.rdf.TransformNanopub;
-
 import org.apache.wicket.markup.html.link.Link;
+import org.nanopub.trusty.MakeTrustyNanopub;
 
 public class MakeTrusty extends Link<Object> {
 
@@ -18,7 +17,7 @@ public class MakeTrusty extends Link<Object> {
 	@Override
 	public void onClick() {
 		try {
-			mainPage.setNanopub(TransformNanopub.transform(mainPage.getNanopub()), ValidatorPage.MADE_TRUSTY);
+			mainPage.setNanopub(MakeTrustyNanopub.transform(mainPage.getNanopub()), ValidatorPage.MADE_TRUSTY);
 			mainPage.setMessageText("Transformed to a nanopublication with a trusty URI.");
 		} catch (Exception ex) {
 			ex.printStackTrace();

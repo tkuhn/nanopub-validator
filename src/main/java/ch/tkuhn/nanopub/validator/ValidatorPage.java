@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.trustyuri.TrustyUriUtils;
-import net.trustyuri.rdf.CheckNanopub;
-import net.trustyuri.rdf.RdfModule;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -26,6 +23,8 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
+import org.nanopub.extra.server.GetNanopub;
+import org.nanopub.trusty.TrustyNanopubUtils;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -45,15 +44,6 @@ public class ValidatorPage extends WebPage {
 	static final int MADE_TRUSTY = 11;
 	static final int CONVERTED = 12;
 
-
-	private static final List<String> nanopubServers = new ArrayList<>();
-
-	static {
-		nanopubServers.add("http://np.inn.ac/");
-		if (Application.get().usesDevelopmentConfig()) {
-			nanopubServers.add("http://localhost:8080/nanopub-server/");
-		}
-	}
 
 	private Model<String> messageTextModel = new Model<>("");
 	private Model<String> resultTextModel = new Model<>("");
@@ -218,36 +208,8 @@ public class ValidatorPage extends WebPage {
 				sr.shutDown();
 				messageText = "Loaded from SPARQL endpoint " + sparqlEndpointUrl + ".";
 			} else if (mode == TRUSTY_URI_MODE) {
-				String text = (String) objs[0];
-				String ac;
-				if (text.indexOf(":") > 0) {
-					URI uri = new URIImpl(text);
-					if (!TrustyUriUtils.isPotentialTrustyUri(uri)) {
-						throw new IllegalArgumentException("Not a well-formed trusty URI");
-					}
-					ac = TrustyUriUtils.getArtifactCode(uri.toString());
-				} else {
-					ac = text;
-					if (!TrustyUriUtils.isPotentialTrustyUri(new URIImpl("http://example.org/" + ac))) {
-						throw new IllegalArgumentException("Not a well-formed artifact code");
-					}
-				}
-				if (!ac.startsWith(RdfModule.MODULE_ID)) {
-					throw new IllegalArgumentException("Not a trusty URI of type RA");
-				}
-				for (String nps : nanopubServers) {
-					try {
-						URL url = new URL(nps + ac);
-						System.err.println("TRYING " + url);
-						nanopub = new NanopubImpl(url);
-						if (CheckNanopub.isValid(nanopub)) {
-							messageText = "Loaded by trusty URI from nanopub server " + nps + ".";
-							break;
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
+				String uriOrArtifactCode = (String) objs[0];
+				nanopub = GetNanopub.getNanopub(uriOrArtifactCode);
 				if (nanopub == null) {
 					throw new IOException("Couldn't find nanopublication");
 				}
@@ -314,7 +276,7 @@ public class ValidatorPage extends WebPage {
 			trustyUriTitleStyleModel.setObject("color:black");
 			trustyUriTextModel.setObject("This nanopublication has no <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 			trustySection.add(new AttributeModifier("class", new Model<String>("visible")));
-		} else if (CheckNanopub.isValid(nanopub)) {
+		} else if (TrustyNanopubUtils.isValidTrustyNanopub(nanopub)) {
 			trustyUriTitleModel.setObject("Valid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:green");
 			trustyUriTextModel.setObject("This nanopublication has a valid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
