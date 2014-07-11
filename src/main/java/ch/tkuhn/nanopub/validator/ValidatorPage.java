@@ -209,7 +209,7 @@ public class ValidatorPage extends WebPage {
 				messageText = "Loaded from SPARQL endpoint " + sparqlEndpointUrl + ".";
 			} else if (mode == TRUSTY_URI_MODE) {
 				String uriOrArtifactCode = (String) objs[0];
-				nanopub = GetNanopub.getNanopub(uriOrArtifactCode);
+				nanopub = GetNanopub.get(uriOrArtifactCode);
 				if (nanopub == null) {
 					throw new IOException("Couldn't find nanopublication");
 				}
