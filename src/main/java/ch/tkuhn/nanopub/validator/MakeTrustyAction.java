@@ -3,13 +3,13 @@ package ch.tkuhn.nanopub.validator;
 import org.apache.wicket.markup.html.link.Link;
 import org.nanopub.trusty.MakeTrustyNanopub;
 
-public class MakeTrusty extends Link<Object> {
+public class MakeTrustyAction extends Link<Object> {
 
 	private static final long serialVersionUID = -4558302923207618223L;
 
 	private ValidatorPage mainPage;
 	
-	public MakeTrusty(String id, ValidatorPage mainPage) {
+	public MakeTrustyAction(String id, ValidatorPage mainPage) {
 		super(id);
 		this.mainPage = mainPage;
 	}

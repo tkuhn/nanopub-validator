@@ -5,11 +5,11 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 
-public class TrustyUriPanel extends Panel {
+public class NanopubServerPanel extends Panel {
 
 	private static final long serialVersionUID = -5385086583534131943L;
 
-	public TrustyUriPanel(String id, ValidatorPage page) {
+	public NanopubServerPanel(String id, ValidatorPage page) {
 		super(id);
 		add(new UrlForm("form", page));
 	}

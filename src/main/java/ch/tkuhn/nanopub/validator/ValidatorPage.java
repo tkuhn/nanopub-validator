@@ -57,7 +57,7 @@ public class ValidatorPage extends WebPage {
 	private DirectInputPanel directInputPanel;
 	private Panel fileUploadPanel, urlPanel, sparqlEndpointPanel, trustyUriPanel;
 
-	private WebMarkupContainer trustySection, actionBox;
+	private WebMarkupContainer trustySection, publishSection, actionBox;
 
 	private TabbedPanel<ITab> tabbedPanel;
 
@@ -120,13 +120,13 @@ public class ValidatorPage extends WebPage {
 
 		});
 
-		tabs.add(new AbstractTab(new Model<String>("from Trusty URI")) {
+		tabs.add(new AbstractTab(new Model<String>("from Nanopub Server")) {
 
 			private static final long serialVersionUID = -976569935347713558L;
 
 			public Panel getPanel(String panelId) {
 				if (trustyUriPanel == null) {
-					trustyUriPanel = new TrustyUriPanel(panelId, ValidatorPage.this);
+					trustyUriPanel = new NanopubServerPanel(panelId, ValidatorPage.this);
 				}
 				return trustyUriPanel;
 			}
@@ -153,9 +153,9 @@ public class ValidatorPage extends WebPage {
 		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
 		add(actionBox);
 
-		actionBox.add(new Convert("trigconvert", RDFFormat.TRIG, this));
-		actionBox.add(new Convert("trixconvert", RDFFormat.TRIX, this));
-		actionBox.add(new Convert("nqconvert", RDFFormat.NQUADS, this));
+		actionBox.add(new ConvertAction("trigconvert", RDFFormat.TRIG, this));
+		actionBox.add(new ConvertAction("trixconvert", RDFFormat.TRIX, this));
+		actionBox.add(new ConvertAction("nqconvert", RDFFormat.NQUADS, this));
 
 		actionBox.add(new ResourceLink<Object>("download", new DownloadResource(format, this)));
 
@@ -163,7 +163,13 @@ public class ValidatorPage extends WebPage {
 		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
 		actionBox.add(trustySection);
 
-		trustySection.add(new MakeTrusty("maketrusty", this));
+		trustySection.add(new MakeTrustyAction("maketrusty", this));
+
+		publishSection = new WebMarkupContainer("publishaction");
+		publishSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		actionBox.add(publishSection);
+
+		publishSection.add(new PublishAction("publish", this));
     }
 
 	Nanopub getNanopub() {
@@ -280,6 +286,7 @@ public class ValidatorPage extends WebPage {
 			trustyUriTitleModel.setObject("Valid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:green");
 			trustyUriTextModel.setObject("This nanopublication has a valid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
+			publishSection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else {
 			trustyUriTitleModel.setObject("Invalid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:red");
@@ -312,6 +319,7 @@ public class ValidatorPage extends WebPage {
 		trustyUriTextModel.setObject("");
 		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
 		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		publishSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 	}
 
 }
