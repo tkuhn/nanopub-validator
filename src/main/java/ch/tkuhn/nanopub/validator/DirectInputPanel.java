@@ -1,14 +1,11 @@
 package ch.tkuhn.nanopub.validator;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -45,23 +42,6 @@ public class DirectInputPanel extends Panel {
 		};
 
 		add(form);
-
-		form.add(new Link<Object>("loadexample") {
-
-			private static final long serialVersionUID = -8916411218095455218L;
-
-			@Override
-			public void onClick() {
-				InputStream in = getClass().getResourceAsStream("example.trig");
-				Scanner s = new java.util.Scanner(in);
-				s.useDelimiter("\\A");
-			    inputTextModel.setObject(s.hasNext() ? s.next() : "");
-			    s.close();
-				selectedFormat = "TriG";
-				page.clear();
-			}
-
-		} );
 		form.add(new TextArea<String>("nanopubtext", inputTextModel));
 		form.add(new RadioChoice<String>("format", formatModel, FORMATS).setSuffix("&nbsp;"));
 	}

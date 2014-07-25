@@ -147,6 +147,10 @@ input.textfield {
 	margin-bottom: 5px;
 }
 
+select {
+	width: 980px;
+}
+
 .separator {
 	margin: 10px;
 }

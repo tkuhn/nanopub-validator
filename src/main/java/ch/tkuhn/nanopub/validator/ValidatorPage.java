@@ -2,6 +2,7 @@ package ch.tkuhn.nanopub.validator;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,10 +37,11 @@ public class ValidatorPage extends WebPage {
 	private static final long serialVersionUID = -8749816277274862810L;
 
 	static final int DIRECT_INPUT_MODE = 1;
-	static final int FILE_UPLOAD_MODE = 2;
-	static final int URL_MODE = 3;
-	static final int SPARQL_ENDPOINT_MODE = 4;
-	static final int TRUSTY_URI_MODE = 5;
+	static final int EXAMPLE_MODE = 2;
+	static final int FILE_UPLOAD_MODE = 3;
+	static final int URL_MODE = 4;
+	static final int SPARQL_ENDPOINT_MODE = 5;
+	static final int TRUSTY_URI_MODE = 6;
 
 	static final int MADE_TRUSTY = 11;
 	static final int CONVERTED = 12;
@@ -55,7 +57,7 @@ public class ValidatorPage extends WebPage {
 	private Model<String> trustyUriTitleStyleModel = new Model<>();
 
 	private DirectInputPanel directInputPanel;
-	private Panel fileUploadPanel, urlPanel, sparqlEndpointPanel, trustyUriPanel;
+	private Panel examplePanel, fileUploadPanel, urlPanel, sparqlEndpointPanel, trustyUriPanel;
 
 	private WebMarkupContainer trustySection, publishSection, actionBox;
 
@@ -77,6 +79,19 @@ public class ValidatorPage extends WebPage {
 					directInputPanel = new DirectInputPanel(panelId, ValidatorPage.this);
 				}
 				return directInputPanel;
+			}
+
+		});
+
+		tabs.add(new AbstractTab(new Model<String>("Load Example")) {
+
+			private static final long serialVersionUID = -5236526957334243565L;
+
+			public Panel getPanel(String panelId) {
+				if (examplePanel == null) {
+					examplePanel = new ExamplePanel(panelId, ValidatorPage.this);
+				}
+				return examplePanel;
 			}
 
 		});
@@ -197,6 +212,10 @@ public class ValidatorPage extends WebPage {
 				format = (RDFFormat) objs[1];
 				nanopub = new NanopubImpl(inputText, format);
 				messageText = "Loaded from direct input.";
+			} else if (mode == EXAMPLE_MODE) {
+				InputStream in = getClass().getResourceAsStream(objs[0].toString());
+				nanopub = new NanopubImpl(in, RDFFormat.TRIG);
+				messageText = "Example loaded.";
 			} else if (mode == FILE_UPLOAD_MODE) {
 				File file = (File) objs[0];
 				nanopub = new NanopubImpl(file);
