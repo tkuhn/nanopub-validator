@@ -24,7 +24,7 @@ public class ConvertAction extends Link<Object> {
 				initialFormatName = mainPage.getFormat().getName();
 			}
 			mainPage.setNanopub(mainPage.getNanopub(), format, ValidatorPage.CONVERTED);
-			mainPage.setMessageText("Converted from " + initialFormatName + ".");
+			mainPage.setMessageText("Converted from " + initialFormatName + ":");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

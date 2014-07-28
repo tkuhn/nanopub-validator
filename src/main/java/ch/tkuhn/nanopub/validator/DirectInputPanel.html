@@ -6,13 +6,16 @@
 
 <form wicket:id="form" class="tab">
 
-<p>Paste/edit your nanopublication below (UTF-8 encoded).</p>
-
-<p><textarea wicket:id="nanopubtext" rows="15"></textarea></p>
-
 <p>
+<span class="alignleft">
+Paste/edit your nanopublication below (UTF-8 encoded).
+</span>
+<span class="alignright">
 Format: <span wicket:id="format"></span>
+</span>
 </p>
+
+<p class="clearalign"><textarea wicket:id="nanopubtext" rows="15"></textarea></p>
 
 <p>
 <input type="submit" class="button" value="Check" />

@@ -53,6 +53,7 @@ public class ValidatorPage extends WebPage {
 	private Model<String> messageTitleModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> trustyUriTitleModel = new Model<>("");
+	private Model<String> messageTitleStyleModel = new Model<>();
 	private Model<String> resultTitleStyleModel = new Model<>();
 	private Model<String> trustyUriTitleStyleModel = new Model<>();
 
@@ -60,7 +61,7 @@ public class ValidatorPage extends WebPage {
 	private NanopubServerPanel nanopubServerPanel;
 	private Panel examplePanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
-	private WebMarkupContainer trustySection, publishSection, actionBox;
+	private WebMarkupContainer trustySection, publishSection, resultBox;
 
 	private TabbedPanel<ITab> tabbedPanel;
 
@@ -151,39 +152,41 @@ public class ValidatorPage extends WebPage {
 
 		add(tabbedPanel = new TabbedPanel<ITab>("tabs", tabs));
 
-		Label resultTitle = new Label("resulttitle", resultTitleModel);
-		add(resultTitle);
-		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
-		add(new Label("resulttext", resultTextModel));
-
-		Label trustyUriTitle = new Label("trustyurititle", trustyUriTitleModel);
-		add(trustyUriTitle);
-		trustyUriTitle.add(new AttributeModifier("style", trustyUriTitleStyleModel));
-		add(new Label("trustyuritext", trustyUriTextModel).setEscapeModelStrings(false));
-		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
-
-		add(new Label("messagetitle", messageTitleModel));
+		Label messageTitle = new Label("messagetitle", messageTitleModel);
+		add(messageTitle);
+		messageTitle.add(new AttributeModifier("style", messageTitleStyleModel));
 		add(new Label("messagetext", messageTextModel));
 
-		actionBox = new WebMarkupContainer("actions");
-		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
-		add(actionBox);
+		resultBox = new WebMarkupContainer("result");
+		resultBox.add(new AttributeModifier("class", new Model<String>("hidden")));
+		add(resultBox);
 
-		actionBox.add(new ConvertAction("trigconvert", RDFFormat.TRIG, this));
-		actionBox.add(new ConvertAction("trixconvert", RDFFormat.TRIX, this));
-		actionBox.add(new ConvertAction("nqconvert", RDFFormat.NQUADS, this));
+		Label resultTitle = new Label("resulttitle", resultTitleModel);
+		resultBox.add(resultTitle);
+		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
+		resultBox.add(new Label("resulttext", resultTextModel));
 
-		actionBox.add(new ResourceLink<Object>("download", new DownloadResource(format, this)));
+		Label trustyUriTitle = new Label("trustyurititle", trustyUriTitleModel);
+		resultBox.add(trustyUriTitle);
+		trustyUriTitle.add(new AttributeModifier("style", trustyUriTitleStyleModel));
+		resultBox.add(new Label("trustyuritext", trustyUriTextModel).setEscapeModelStrings(false));
+		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
+
+		resultBox.add(new ConvertAction("trigconvert", RDFFormat.TRIG, this));
+		resultBox.add(new ConvertAction("trixconvert", RDFFormat.TRIX, this));
+		resultBox.add(new ConvertAction("nqconvert", RDFFormat.NQUADS, this));
+
+		resultBox.add(new ResourceLink<Object>("download", new DownloadResource(format, this)));
 
 		trustySection = new WebMarkupContainer("trustyaction");
 		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
-		actionBox.add(trustySection);
+		resultBox.add(trustySection);
 
 		trustySection.add(new MakeTrustyAction("maketrusty", this));
 
 		publishSection = new WebMarkupContainer("publishaction");
 		publishSection.add(new AttributeModifier("class", new Model<String>("hidden")));
-		actionBox.add(publishSection);
+		resultBox.add(publishSection);
 
 		publishSection.add(new PublishAction("publish", this));
     }
@@ -212,19 +215,19 @@ public class ValidatorPage extends WebPage {
 				}
 				format = (RDFFormat) objs[1];
 				nanopub = new NanopubImpl(inputText, format);
-				messageText = "Loaded from direct input.";
+				messageText = "Loaded from direct input:";
 			} else if (mode == EXAMPLE_MODE) {
 				InputStream in = getClass().getResourceAsStream(objs[0].toString());
 				nanopub = new NanopubImpl(in, RDFFormat.TRIG);
-				messageText = "Example loaded.";
+				messageText = "Example loaded:";
 			} else if (mode == FILE_UPLOAD_MODE) {
 				File file = (File) objs[0];
 				nanopub = new NanopubImpl(file);
-				messageText = "Loaded from file " + file.getName() + ".";
+				messageText = "Loaded from file " + file.getName() + ":";
 			} else if (mode == URL_MODE) {
 				URL url = new URL((String) objs[0]);
 				nanopub = new NanopubImpl(url);
-				messageText = "Loaded from URL " + url + ".";
+				messageText = "Loaded from URL " + url + ":";
 			} else if (mode == SPARQL_ENDPOINT_MODE) {
 				String sparqlEndpointUrl = (String) objs[0];
 				SPARQLRepository sr = new SPARQLRepository(sparqlEndpointUrl);
@@ -232,44 +235,44 @@ public class ValidatorPage extends WebPage {
 				sr.initialize();
 				nanopub = new NanopubImpl(sr, nanopubUri);
 				sr.shutDown();
-				messageText = "Loaded from SPARQL endpoint " + sparqlEndpointUrl + ".";
+				messageText = "Loaded from SPARQL endpoint " + sparqlEndpointUrl + ":";
 			} else if (mode == NANOPUB_SERVER_MODE) {
 				String uriOrArtifactCode = (String) objs[0];
 				nanopub = GetNanopub.get(uriOrArtifactCode);
 				if (nanopub == null) {
 					throw new IOException("Couldn't find nanopublication");
 				}
-				messageText = "Loaded from nanopub server.";
+				messageText = "Loaded from nanopub server:";
 			}
 		} catch (OpenRDFException ex) {
-			resultTitleModel.setObject("Invalid Nanopublication");
-			resultTitleStyleModel.setObject("color:red");
-			resultTextModel.setObject(ex.getMessage());
+			messageTitleModel.setObject("Invalid Nanopublication");
+			messageTitleStyleModel.setObject("color:red");
+			messageTextModel.setObject(ex.getMessage());
 			return;
 		} catch (MalformedNanopubException ex) {
-			resultTitleModel.setObject("Invalid Nanopublication");
-			resultTitleStyleModel.setObject("color:red");
-			resultTextModel.setObject(ex.getMessage());
+			messageTitleModel.setObject("Invalid Nanopublication");
+			messageTitleStyleModel.setObject("color:red");
+			messageTextModel.setObject(ex.getMessage());
 			return;
 		} catch (MalformedURLException ex) {
-			resultTitleModel.setObject("Malformed URL");
-			resultTitleStyleModel.setObject("color:red");
-			resultTextModel.setObject(ex.getMessage());
+			messageTitleModel.setObject("Malformed URL");
+			messageTitleStyleModel.setObject("color:red");
+			messageTextModel.setObject(ex.getMessage());
 			return;
 		} catch (IOException ex) {
-			resultTitleModel.setObject("Failed to Read Nanopublication");
-			resultTitleStyleModel.setObject("color:red");
-			resultTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
+			messageTitleModel.setObject("Failed to Read Nanopublication");
+			messageTitleStyleModel.setObject("color:red");
+			messageTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
 			return;
 		} catch (IllegalArgumentException ex) {
-			resultTitleModel.setObject("Illegal Argument");
-			resultTitleStyleModel.setObject("color:red");
-			resultTextModel.setObject(ex.getMessage());
+			messageTitleModel.setObject("Illegal Argument");
+			messageTitleStyleModel.setObject("color:red");
+			messageTextModel.setObject(ex.getMessage());
 			return;
 		} catch (Exception ex) {
-			resultTitleModel.setObject("Unexpected Error");
-			resultTitleStyleModel.setObject("color:black");
-			resultTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
+			messageTitleModel.setObject("Unexpected Error");
+			messageTitleStyleModel.setObject("color:black");
+			messageTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
 			return;
 		}
 		setNanopub(nanopub, mode);
@@ -297,7 +300,7 @@ public class ValidatorPage extends WebPage {
 			directInputPanel.setNanopub(nanopub, format);
 		}
 
-		messageTitleModel.setObject("Nanopublication " + nanopub.getUri());
+		messageTitleModel.setObject("Nanopublication");
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");
@@ -313,7 +316,7 @@ public class ValidatorPage extends WebPage {
 			trustyUriTitleStyleModel.setObject("color:red");
 			trustyUriTextModel.setObject("This nanopublication has an invalid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 		}
-		actionBox.add(new AttributeModifier("class", new Model<String>("visible")));
+		resultBox.add(new AttributeModifier("class", new Model<String>("visible")));
 		if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
@@ -343,9 +346,12 @@ public class ValidatorPage extends WebPage {
 		resultTextModel.setObject("");
 		trustyUriTitleModel.setObject("");
 		trustyUriTextModel.setObject("");
-		actionBox.add(new AttributeModifier("class", new Model<String>("hidden")));
+		resultBox.add(new AttributeModifier("class", new Model<String>("hidden")));
 		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
 		publishSection.add(new AttributeModifier("class", new Model<String>("hidden")));
+		messageTitleStyleModel.setObject("");
+		resultTitleStyleModel.setObject("");
+		trustyUriTitleStyleModel.setObject("");
 	}
 
 }

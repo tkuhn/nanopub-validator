@@ -31,19 +31,22 @@ The source code can be found on <a href="https://github.com/tkuhn/nanopub-valida
 <p wicket:id="messagetext"></p>
 
 
-<h3><span wicket:id="resulttitle"></span></h3>
+<div wicket:id="result">
+<div class="resultbox">
 
-<p wicket:id="resulttext"></p>
+<p>
+<strong><span wicket:id="resulttitle"></span></strong> &mdash;
+<span wicket:id="resulttext"></span>
+</p>
 
+<p>
+<strong><span wicket:id="trustyurititle"></span></strong> &mdash;
+<span wicket:id="trustyuritext"></span>
+</p>
 
-<h3><span wicket:id="trustyurititle"></span></h3>
+<hr/>
 
-<p wicket:id="trustyuritext"></p>
-
-
-<div wicket:id="actions">
-
-<p class="actionbox">
+<p>
 Actions:
 <span class="separator"></span>
 <span wicket:id="trustyaction">
@@ -61,6 +64,7 @@ Actions:
 </span>
 </p>
 
+</div>
 </div>
 
 </body>
