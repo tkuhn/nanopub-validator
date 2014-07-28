@@ -41,7 +41,7 @@ public class ValidatorPage extends WebPage {
 	static final int FILE_UPLOAD_MODE = 3;
 	static final int URL_MODE = 4;
 	static final int SPARQL_ENDPOINT_MODE = 5;
-	static final int TRUSTY_URI_MODE = 6;
+	static final int NANOPUB_SERVER_MODE = 6;
 
 	static final int MADE_TRUSTY = 11;
 	static final int CONVERTED = 12;
@@ -57,7 +57,8 @@ public class ValidatorPage extends WebPage {
 	private Model<String> trustyUriTitleStyleModel = new Model<>();
 
 	private DirectInputPanel directInputPanel;
-	private Panel examplePanel, fileUploadPanel, urlPanel, sparqlEndpointPanel, trustyUriPanel;
+	private NanopubServerPanel nanopubServerPanel;
+	private Panel examplePanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
 
 	private WebMarkupContainer trustySection, publishSection, actionBox;
 
@@ -140,10 +141,10 @@ public class ValidatorPage extends WebPage {
 			private static final long serialVersionUID = -976569935347713558L;
 
 			public Panel getPanel(String panelId) {
-				if (trustyUriPanel == null) {
-					trustyUriPanel = new NanopubServerPanel(panelId, ValidatorPage.this);
+				if (nanopubServerPanel == null) {
+					nanopubServerPanel = new NanopubServerPanel(panelId, ValidatorPage.this);
 				}
-				return trustyUriPanel;
+				return nanopubServerPanel;
 			}
 
 		});
@@ -232,12 +233,13 @@ public class ValidatorPage extends WebPage {
 				nanopub = new NanopubImpl(sr, nanopubUri);
 				sr.shutDown();
 				messageText = "Loaded from SPARQL endpoint " + sparqlEndpointUrl + ".";
-			} else if (mode == TRUSTY_URI_MODE) {
+			} else if (mode == NANOPUB_SERVER_MODE) {
 				String uriOrArtifactCode = (String) objs[0];
 				nanopub = GetNanopub.get(uriOrArtifactCode);
 				if (nanopub == null) {
 					throw new IOException("Couldn't find nanopublication");
 				}
+				messageText = "Loaded from nanopub server.";
 			}
 		} catch (OpenRDFException ex) {
 			resultTitleModel.setObject("Invalid Nanopublication");
@@ -326,6 +328,11 @@ public class ValidatorPage extends WebPage {
 		resultTextModel.setObject("Congratulations, this is a valid nanopublication!");
 		resultTitleModel.setObject("Valid Nanopublication");
 		resultTitleStyleModel.setObject("color:green");
+	}
+
+	public void showTrustyUri(String trustyUriOrArtifactCode) {
+		tabbedPanel.setSelectedTab(5);
+		nanopubServerPanel.setText(trustyUriOrArtifactCode);
 	}
 
 	void clear() {

@@ -1,5 +1,7 @@
 package ch.tkuhn.nanopub.validator;
 
+import net.trustyuri.TrustyUriUtils;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxCallListener;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
@@ -31,8 +33,11 @@ public class PublishAction extends AjaxLink<Object> {
 	@Override
 	public void onClick(AjaxRequestTarget target) {
 		try {
-			PublishNanopub.publish(mainPage.getNanopub());
-			mainPage.setMessageText("Successfully published.");
+			PublishNanopub p = new PublishNanopub();
+			p.publishNanopub(mainPage.getNanopub());
+			String ac = TrustyUriUtils.getArtifactCode(mainPage.getNanopub().getUri().toString());
+			mainPage.setMessageText("Successfully published at: " + p.getPublishedNanopubUrl());
+			mainPage.showTrustyUri(ac);
 		} catch (Exception ex) {
 			mainPage.setMessageText("Publication failed.");
 			ex.printStackTrace();

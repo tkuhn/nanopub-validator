@@ -9,9 +9,15 @@ public class UrlPanel extends Panel {
 
 	private static final long serialVersionUID = -5385086583534131943L;
 
+	private Model<String> textFieldModel;
+
 	public UrlPanel(String id, ValidatorPage page) {
 		super(id);
 		add(new UrlForm("form", page));
+	}
+
+	public void setUrl(String url) {
+		textFieldModel.setObject(url);
 	}
 
 	private class UrlForm extends Form<Void> {
@@ -25,7 +31,8 @@ public class UrlPanel extends Panel {
 			super(name);
 			this.page = page;
 			setMultiPart(true);
-			textField = new TextField<String>("urlInput", new Model<String>());
+			textFieldModel = new Model<String>();
+			textField = new TextField<String>("urlInput", textFieldModel);
 			add(textField);
 		}
 
