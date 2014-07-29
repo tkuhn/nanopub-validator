@@ -66,7 +66,7 @@ public class ValidatorPage extends WebPage {
 	private TabbedPanel<ITab> tabbedPanel;
 
 	private Nanopub nanopub;
-	private RDFFormat format;
+	private RDFFormat format = RDFFormat.TRIG;
 
 	public ValidatorPage(final PageParameters parameters) {
 		super(parameters);
@@ -155,7 +155,7 @@ public class ValidatorPage extends WebPage {
 		Label messageTitle = new Label("messagetitle", messageTitleModel);
 		add(messageTitle);
 		messageTitle.add(new AttributeModifier("style", messageTitleStyleModel));
-		add(new Label("messagetext", messageTextModel));
+		add(new Label("messagetext", messageTextModel).setEscapeModelStrings(false));
 
 		resultBox = new WebMarkupContainer("result");
 		resultBox.add(new AttributeModifier("class", new Model<String>("hidden")));
@@ -218,7 +218,8 @@ public class ValidatorPage extends WebPage {
 				messageText = "Loaded from direct input:";
 			} else if (mode == EXAMPLE_MODE) {
 				InputStream in = getClass().getResourceAsStream(objs[0].toString());
-				nanopub = new NanopubImpl(in, RDFFormat.TRIG);
+				format = RDFFormat.TRIG;
+				nanopub = new NanopubImpl(in, format);
 				messageText = "Example loaded:";
 			} else if (mode == FILE_UPLOAD_MODE) {
 				File file = (File) objs[0];
@@ -245,42 +246,32 @@ public class ValidatorPage extends WebPage {
 				messageText = "Loaded from nanopub server:";
 			}
 		} catch (OpenRDFException ex) {
-			messageTitleModel.setObject("Invalid Nanopublication");
-			messageTitleStyleModel.setObject("color:red");
-			messageTextModel.setObject(ex.getMessage());
+			setMessage("Invalid Nanopublication", "color:red", ex.getMessage());
 			return;
 		} catch (MalformedNanopubException ex) {
-			messageTitleModel.setObject("Invalid Nanopublication");
-			messageTitleStyleModel.setObject("color:red");
-			messageTextModel.setObject(ex.getMessage());
+			setMessage("Invalid Nanopublication", "color:red", ex.getMessage());
 			return;
 		} catch (MalformedURLException ex) {
-			messageTitleModel.setObject("Malformed URL");
-			messageTitleStyleModel.setObject("color:red");
-			messageTextModel.setObject(ex.getMessage());
+			setMessage("Malformed URL", "color:red", ex.getMessage());
 			return;
 		} catch (IOException ex) {
-			messageTitleModel.setObject("Failed to Read Nanopublication");
-			messageTitleStyleModel.setObject("color:red");
-			messageTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
+			setMessage("Failed to Read Nanopublication", "color:red", ex.getClass().getName() + ": " + ex.getMessage());
 			return;
 		} catch (IllegalArgumentException ex) {
-			messageTitleModel.setObject("Illegal Argument");
-			messageTitleStyleModel.setObject("color:red");
-			messageTextModel.setObject(ex.getMessage());
+			setMessage("Illegal Argument", "color:red", ex.getMessage());
 			return;
 		} catch (Exception ex) {
-			messageTitleModel.setObject("Unexpected Error");
-			messageTitleStyleModel.setObject("color:black");
-			messageTextModel.setObject(ex.getClass().getName() + ": " + ex.getMessage());
+			setMessage("Unexpected Error", "color:red", ex.getClass().getName() + ": " + ex.getMessage());
 			return;
 		}
 		setNanopub(nanopub, mode);
-		setMessageText(messageText);
+		setMessage("Nanopublication", "", messageText);
 	}
 
-	public void setMessageText(String messageText) {
-		messageTextModel.setObject(messageText);
+	public void setMessage(String title, String titleStyle, String text) {
+		messageTitleModel.setObject(title);
+		messageTitleStyleModel.setObject(titleStyle);
+		messageTextModel.setObject(text);
 	}
 
 	public void setNanopub(Nanopub nanopub, int mode) {
@@ -300,7 +291,6 @@ public class ValidatorPage extends WebPage {
 			directInputPanel.setNanopub(nanopub, format);
 		}
 
-		messageTitleModel.setObject("Nanopublication");
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");

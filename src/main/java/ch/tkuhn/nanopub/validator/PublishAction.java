@@ -36,10 +36,10 @@ public class PublishAction extends AjaxLink<Object> {
 			PublishNanopub p = new PublishNanopub();
 			p.publishNanopub(mainPage.getNanopub());
 			String ac = TrustyUriUtils.getArtifactCode(mainPage.getNanopub().getUri().toString());
-			mainPage.setMessageText("Successfully published at: " + p.getPublishedNanopubUrl());
+			mainPage.setMessage("Nanopublication", "", "Successfully published at: " + p.getPublishedNanopubUrl());
 			mainPage.showTrustyUri(ac);
 		} catch (Exception ex) {
-			mainPage.setMessageText("Publication failed.");
+			mainPage.setMessage("Nanopublication", "", "Publication failed.");
 			ex.printStackTrace();
 		}
 		setResponsePage(mainPage);
