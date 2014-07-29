@@ -50,12 +50,15 @@ public class ValidatorPage extends WebPage {
 	private Model<String> messageTextModel = new Model<>("");
 	private Model<String> resultTextModel = new Model<>("");
 	private Model<String> trustyUriTextModel = new Model<>("");
+	private Model<String> publishedTextModel = new Model<>("");
 	private Model<String> messageTitleModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
 	private Model<String> trustyUriTitleModel = new Model<>("");
+	private Model<String> publishedTitleModel = new Model<>("");
 	private Model<String> messageTitleStyleModel = new Model<>();
 	private Model<String> resultTitleStyleModel = new Model<>();
 	private Model<String> trustyUriTitleStyleModel = new Model<>();
+	private Model<String> publishedTitleStyleModel = new Model<>();
 
 	private DirectInputPanel directInputPanel;
 	private NanopubServerPanel nanopubServerPanel;
@@ -172,7 +175,11 @@ public class ValidatorPage extends WebPage {
 		resultBox.add(trustyUriTitle);
 		trustyUriTitle.add(new AttributeModifier("style", trustyUriTitleStyleModel));
 		resultBox.add(new Label("trustyuritext", trustyUriTextModel).setEscapeModelStrings(false));
-		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
+
+		Label publishedTitle = new Label("publishedtitle", publishedTitleModel);
+		resultBox.add(publishedTitle);
+		publishedTitle.add(new AttributeModifier("style", publishedTitleStyleModel));
+		resultBox.add(new Label("publishedtext", publishedTextModel).setEscapeModelStrings(false));
 
 		resultBox.add(new ConvertAction("trigconvert", RDFFormat.TRIG, this));
 		resultBox.add(new ConvertAction("trixconvert", RDFFormat.TRIX, this));
@@ -316,16 +323,34 @@ public class ValidatorPage extends WebPage {
 			trustyUriTitleModel.setObject("No trusty URI");
 			trustyUriTitleStyleModel.setObject("color:black");
 			trustyUriTextModel.setObject("This nanopublication has no <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
+			publishedTitleModel.setObject("Not published");
+			publishedTitleStyleModel.setObject("color:black");
+			publishedTextModel.setObject("Only nanopublications with a valid trusty URI can be published on nanopub servers.");
 			trustySection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (TrustyNanopubUtils.isValidTrustyNanopub(nanopub)) {
 			trustyUriTitleModel.setObject("Valid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:green");
 			trustyUriTextModel.setObject("This nanopublication has a valid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
-			publishSection.add(new AttributeModifier("class", new Model<String>("visible")));
+			try {
+				String u = "http://np.inn.ac/" + TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
+				new NanopubImpl(new URL(u));
+				publishedTitleModel.setObject("Published");
+				publishedTitleStyleModel.setObject("color:green");
+				publishedTextModel.setObject("On nanopub server: <a href=\"" + u + "\">" + u + "</a>");
+			} catch (IOException ex) {
+				publishedTitleModel.setObject("Not published");
+				publishedTitleStyleModel.setObject("color:black");
+				String u = "http://np.inn.ac/";
+				publishedTextModel.setObject("This nanopublication is not published on a nanopub server (at least not on <a href=\"" + u + "\">" + u + "</a>).");
+				publishSection.add(new AttributeModifier("class", new Model<String>("visible")));
+			} catch (Exception ex) {}
 		} else {
 			trustyUriTitleModel.setObject("Invalid trusty URI");
 			trustyUriTitleStyleModel.setObject("color:red");
 			trustyUriTextModel.setObject("This nanopublication has an invalid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
+			publishedTitleModel.setObject("Not published");
+			publishedTitleStyleModel.setObject("color:black");
+			publishedTextModel.setObject("Only nanopublications with a valid trusty URI can be published on nanopub servers.");
 		}
 		resultBox.add(new AttributeModifier("class", new Model<String>("visible")));
 		if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
@@ -344,6 +369,10 @@ public class ValidatorPage extends WebPage {
 		resultTitleStyleModel.setObject("color:green");
 	}
 
+	public void refresh() {
+		showNanopub(nanopub, format, -1);
+	}
+
 	public void showTrustyUri(String trustyUriOrArtifactCode) {
 		tabbedPanel.setSelectedTab(5);
 		nanopubServerPanel.setText(trustyUriOrArtifactCode);
@@ -357,12 +386,15 @@ public class ValidatorPage extends WebPage {
 		resultTextModel.setObject("");
 		trustyUriTitleModel.setObject("");
 		trustyUriTextModel.setObject("");
+		publishedTitleModel.setObject("");
+		publishedTextModel.setObject("");
 		resultBox.add(new AttributeModifier("class", new Model<String>("hidden")));
 		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
 		publishSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 		messageTitleStyleModel.setObject("");
 		resultTitleStyleModel.setObject("");
 		trustyUriTitleStyleModel.setObject("");
+		publishedTitleStyleModel.setObject("");
 	}
 
 }
