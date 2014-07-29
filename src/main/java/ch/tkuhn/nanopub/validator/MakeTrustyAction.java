@@ -17,8 +17,8 @@ public class MakeTrustyAction extends Link<Object> {
 	@Override
 	public void onClick() {
 		try {
-			mainPage.setNanopub(MakeTrustyNanopub.transform(mainPage.getNanopub()), ValidatorPage.MADE_TRUSTY);
-			mainPage.setMessage("Nanopublication", "", "Transformed to a nanopublication with a trusty URI:");
+			mainPage.showNanopub(MakeTrustyNanopub.transform(mainPage.getNanopub()), ValidatorPage.MADE_TRUSTY);
+			mainPage.setMessage("Nanopublication", "Transformed to a nanopublication with a trusty URI:");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

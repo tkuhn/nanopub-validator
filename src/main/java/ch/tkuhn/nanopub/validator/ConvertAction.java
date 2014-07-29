@@ -23,8 +23,8 @@ public class ConvertAction extends Link<Object> {
 			if (mainPage.getFormat() != null) {
 				initialFormatName = mainPage.getFormat().getName();
 			}
-			mainPage.setNanopub(mainPage.getNanopub(), format, ValidatorPage.CONVERTED);
-			mainPage.setMessage("Nanopublication", "", "Converted from " + initialFormatName + ":");
+			mainPage.showNanopub(mainPage.getNanopub(), format, ValidatorPage.CONVERTED);
+			mainPage.setMessage("Nanopublication", "Converted from " + initialFormatName + ":");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

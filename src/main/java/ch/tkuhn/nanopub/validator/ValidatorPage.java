@@ -60,6 +60,7 @@ public class ValidatorPage extends WebPage {
 	private DirectInputPanel directInputPanel;
 	private NanopubServerPanel nanopubServerPanel;
 	private Panel examplePanel, fileUploadPanel, urlPanel, sparqlEndpointPanel;
+	private Label messageTextLabel;
 
 	private WebMarkupContainer trustySection, publishSection, resultBox;
 
@@ -155,7 +156,8 @@ public class ValidatorPage extends WebPage {
 		Label messageTitle = new Label("messagetitle", messageTitleModel);
 		add(messageTitle);
 		messageTitle.add(new AttributeModifier("style", messageTitleStyleModel));
-		add(new Label("messagetext", messageTextModel).setEscapeModelStrings(false));
+		messageTextLabel = new Label("messagetext", messageTextModel);
+		add(messageTextLabel);
 
 		resultBox = new WebMarkupContainer("result");
 		resultBox.add(new AttributeModifier("class", new Model<String>("hidden")));
@@ -202,7 +204,6 @@ public class ValidatorPage extends WebPage {
 	void showResult(int mode, Object... objs) {
 		Nanopub nanopub = null;
 		clear();
-		String messageText = null;
 
 		try {
 			if (mode == DIRECT_INPUT_MODE) {
@@ -215,35 +216,35 @@ public class ValidatorPage extends WebPage {
 				}
 				format = (RDFFormat) objs[1];
 				nanopub = new NanopubImpl(inputText, format);
-				messageText = "Loaded from direct input:";
+				setMessage("Nanopublication", "Loaded from direct input:");
 			} else if (mode == EXAMPLE_MODE) {
 				InputStream in = getClass().getResourceAsStream(objs[0].toString());
 				format = RDFFormat.TRIG;
 				nanopub = new NanopubImpl(in, format);
-				messageText = "Example loaded:";
+				setMessage("Nanopublication", "Example loaded:");
 			} else if (mode == FILE_UPLOAD_MODE) {
 				File file = (File) objs[0];
 				nanopub = new NanopubImpl(file);
-				messageText = "Loaded from file " + file.getName() + ":";
+				setMessage("Nanopublication", "Loaded from file " + file.getName() + ":");
 			} else if (mode == URL_MODE) {
 				URL url = new URL((String) objs[0]);
 				nanopub = new NanopubImpl(url);
-				messageText = "Loaded from URL " + url + ":";
+				setMessage("Nanopublication", "Loaded from URL: <a href=\"" + url + "\">" + url + "</a>", false);
 			} else if (mode == SPARQL_ENDPOINT_MODE) {
-				String sparqlEndpointUrl = (String) objs[0];
-				SPARQLRepository sr = new SPARQLRepository(sparqlEndpointUrl);
+				String url = (String) objs[0];
+				SPARQLRepository sr = new SPARQLRepository(url);
 				URI nanopubUri = new URIImpl((String) objs[1]);
 				sr.initialize();
 				nanopub = new NanopubImpl(sr, nanopubUri);
 				sr.shutDown();
-				messageText = "Loaded from SPARQL endpoint " + sparqlEndpointUrl + ":";
+				setMessage("Nanopublication", "Loaded from SPARQL endpoint: <a href=\"" + url + "\">" + url + "</a>", false);
 			} else if (mode == NANOPUB_SERVER_MODE) {
 				String uriOrArtifactCode = (String) objs[0];
 				nanopub = GetNanopub.get(uriOrArtifactCode);
 				if (nanopub == null) {
 					throw new IOException("Couldn't find nanopublication");
 				}
-				messageText = "Loaded from nanopub server:";
+				setMessage("Nanopublication", "Loaded from nanopub server:");
 			}
 		} catch (OpenRDFException ex) {
 			setMessage("Invalid Nanopublication", "color:red", ex.getMessage());
@@ -265,21 +266,41 @@ public class ValidatorPage extends WebPage {
 			return;
 		}
 		setNanopub(nanopub, mode);
-		setMessage("Nanopublication", "", messageText);
+	}
+
+	public void setMessage(String title, String text) {
+		setMessage(title, "", text, true);
+	}
+
+	public void setMessage(String title, String text, boolean escape) {
+		setMessage(title, "", text, escape);
 	}
 
 	public void setMessage(String title, String titleStyle, String text) {
+		setMessage(title, titleStyle, text, true);
+	}
+
+	public void setMessage(String title, String titleStyle, String text, boolean escape) {
 		messageTitleModel.setObject(title);
 		messageTitleStyleModel.setObject(titleStyle);
 		messageTextModel.setObject(text);
+		messageTextLabel.setEscapeModelStrings(escape);
 	}
 
-	public void setNanopub(Nanopub nanopub, int mode) {
+	public void showNanopub(Nanopub nanopub, int mode) {
+		showNanopub(nanopub, null, mode);
+	}
+
+	public void showNanopub(Nanopub nanopub, RDFFormat format, int mode) {
+		clear();
+		setNanopub(nanopub, format, mode);
+	}
+
+	private void setNanopub(Nanopub nanopub, int mode) {
 		setNanopub(nanopub, null, mode);
 	}
 
-	public void setNanopub(Nanopub nanopub, RDFFormat format, int mode) {
-		clear();
+	private void setNanopub(Nanopub nanopub, RDFFormat format, int mode) {
 		this.nanopub = nanopub;
 		if (format != null) {
 			this.format = format;
