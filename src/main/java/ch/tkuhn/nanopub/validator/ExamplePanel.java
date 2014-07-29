@@ -30,6 +30,8 @@ public class ExamplePanel extends Panel {
 			setMultiPart(true);
 			select = new Select<String>("exampleSelect", new PropertyModel<String>(this, "selected"));
 			select.add(new SelectOption<String>("example1", new Model<String>("example1")));
+			select.add(new SelectOption<String>("example2", new Model<String>("example2")));
+			select.add(new SelectOption<String>("example3", new Model<String>("example3")));
 			add(select);
 		}
 
@@ -37,7 +39,7 @@ public class ExamplePanel extends Panel {
 		protected void onSubmit() {
 			String selected = select.getModelObject();
 			if (selected != null) {
-				page.showResult(ValidatorPage.EXAMPLE_MODE, "example.trig");
+				page.showResult(ValidatorPage.EXAMPLE_MODE, selected + ".trig");
 			} else {
 				page.clear();
 			}
