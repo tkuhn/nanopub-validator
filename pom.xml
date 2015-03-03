@@ -6,7 +6,7 @@
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>nanopub-validator</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/tkuhn/nanopub-validator</url>
   <licenses>
     <license>
       <name>GNU Lesser General Public License (LGPL)</name>
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>org.nanopub</groupId>
       <artifactId>nanopub</artifactId>
-      <version>1.4-SNAPSHOT</version>
+      <version>1.4</version>
     </dependency>
   </dependencies>
   <build>
