@@ -32,6 +32,10 @@ ul {
 	margin-bottom: 0.5em;
 }
 
+li {
+	margin: 0.5ex 0ex;
+}
+
 img {
 	vertical-align: middle;
 }
@@ -151,7 +155,7 @@ strong {
 	border-color: #bbb;
 	border-style: solid;
 	border-width: 1px;
-	padding: 0em 1em;
+	padding: 0em 1em 1em 1em;
 	margin-top: 2ex;
 	background: #eee;
 	width: 1000px;

@@ -17,6 +17,7 @@ import org.apache.wicket.extensions.markup.html.tabs.TabbedPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -53,15 +54,12 @@ public class ValidatorPage extends WebPage {
 
 	private Model<String> messageTextModel = new Model<>("");
 	private Model<String> resultTextModel = new Model<>("");
-	private Model<String> trustyUriTextModel = new Model<>("");
 	private Model<String> publishedTextModel = new Model<>("");
 	private Model<String> messageTitleModel = new Model<>("");
 	private Model<String> resultTitleModel = new Model<>("");
-	private Model<String> trustyUriTitleModel = new Model<>("");
 	private Model<String> publishedTitleModel = new Model<>("");
 	private Model<String> messageTitleStyleModel = new Model<>();
 	private Model<String> resultTitleStyleModel = new Model<>();
-	private Model<String> trustyUriTitleStyleModel = new Model<>();
 	private Model<String> publishedTitleStyleModel = new Model<>();
 
 	private DirectInputPanel directInputPanel;
@@ -175,11 +173,6 @@ public class ValidatorPage extends WebPage {
 		resultTitle.add(new AttributeModifier("style", resultTitleStyleModel));
 		resultBox.add(new Label("resulttext", resultTextModel));
 
-		Label trustyUriTitle = new Label("trustyurititle", trustyUriTitleModel);
-		resultBox.add(trustyUriTitle);
-		trustyUriTitle.add(new AttributeModifier("style", trustyUriTitleStyleModel));
-		resultBox.add(new Label("trustyuritext", trustyUriTextModel).setEscapeModelStrings(false));
-
 		Label publishedTitle = new Label("publishedtitle", publishedTitleModel);
 		resultBox.add(publishedTitle);
 		publishedTitle.add(new AttributeModifier("style", publishedTitleStyleModel));
@@ -211,11 +204,15 @@ public class ValidatorPage extends WebPage {
 				if (nanopub == null || !item.getModelObject().isUsedBy(nanopub)) {
 					item.add(new AttributeModifier("class", new Model<String>("hidden")));
 			        item.add(new Label("patternvalid", "(not used)"));
-			        item.add(new Label("patternname", item.getModelObject().getName()));
+			        item.add(new ExternalLink("patternlink", "#", item.getModelObject().getName()));
 			        item.add(new Label("patterntext", ""));
 					return;
 				}
-		        item.add(new Label("patternname", item.getModelObject().getName()));
+				String url = "#";
+				try {
+					url = item.getModelObject().getPatternInfoUrl().toString();
+				} catch (MalformedURLException ex) {}
+		        item.add(new ExternalLink("patternlink", url, item.getModelObject().getName()));
 				Model<String> styleModel = new Model<>();
 				String v;
 				if (item.getModelObject().isCorrectlyUsedBy(nanopub)) {
@@ -356,17 +353,11 @@ public class ValidatorPage extends WebPage {
 		}
 
 		if (!TrustyUriUtils.isPotentialTrustyUri(nanopub.getUri())) {
-			trustyUriTitleModel.setObject("No trusty URI");
-			trustyUriTitleStyleModel.setObject("color:black");
-			trustyUriTextModel.setObject("This nanopublication has no <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 			publishedTitleModel.setObject("Not published");
 			publishedTitleStyleModel.setObject("color:black");
 			publishedTextModel.setObject("Only nanopublications with a valid trusty URI can be published on nanopub servers.");
 			trustySection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (TrustyNanopubUtils.isValidTrustyNanopub(nanopub)) {
-			trustyUriTitleModel.setObject("Valid trusty URI");
-			trustyUriTitleStyleModel.setObject("color:green");
-			trustyUriTextModel.setObject("This nanopublication has a valid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 			try {
 				String u = "http://np.inn.ac/" + TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
 				new NanopubImpl(new URL(u));
@@ -381,9 +372,6 @@ public class ValidatorPage extends WebPage {
 				publishSection.add(new AttributeModifier("class", new Model<String>("visible")));
 			} catch (Exception ex) {}
 		} else {
-			trustyUriTitleModel.setObject("Invalid trusty URI");
-			trustyUriTitleStyleModel.setObject("color:red");
-			trustyUriTextModel.setObject("This nanopublication has an invalid <a href=\"http://arxiv.org/abs/1401.5775\">trusty URI</a>.");
 			publishedTitleModel.setObject("Not published");
 			publishedTitleStyleModel.setObject("color:black");
 			publishedTextModel.setObject("Only nanopublications with a valid trusty URI can be published on nanopub servers.");
@@ -419,8 +407,6 @@ public class ValidatorPage extends WebPage {
 		messageTextModel.setObject("");
 		resultTitleModel.setObject("");
 		resultTextModel.setObject("");
-		trustyUriTitleModel.setObject("");
-		trustyUriTextModel.setObject("");
 		publishedTitleModel.setObject("");
 		publishedTextModel.setObject("");
 		resultBox.add(new AttributeModifier("class", new Model<String>("hidden")));
@@ -428,7 +414,6 @@ public class ValidatorPage extends WebPage {
 		publishSection.add(new AttributeModifier("class", new Model<String>("hidden")));
 		messageTitleStyleModel.setObject("");
 		resultTitleStyleModel.setObject("");
-		trustyUriTitleStyleModel.setObject("");
 		publishedTitleStyleModel.setObject("");
 	}
 
