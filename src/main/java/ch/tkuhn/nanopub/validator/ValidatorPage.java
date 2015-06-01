@@ -18,12 +18,16 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
+import org.nanopub.NanopubPattern;
+import org.nanopub.NanopubPatterns;
 import org.nanopub.extra.server.GetNanopub;
 import org.nanopub.trusty.TrustyNanopubUtils;
 import org.openrdf.OpenRDFException;
@@ -198,6 +202,38 @@ public class ValidatorPage extends WebPage {
 		resultBox.add(publishSection);
 
 		publishSection.add(new PublishAction("publish", this));
+
+		ListView<NanopubPattern> patternList = new ListView<NanopubPattern>("patternlist", NanopubPatterns.getPatterns()) {
+
+			private static final long serialVersionUID = -7597306960671602403L;
+
+			protected void populateItem(ListItem<NanopubPattern> item) {
+				if (nanopub == null || !item.getModelObject().isUsedBy(nanopub)) {
+					item.add(new AttributeModifier("class", new Model<String>("hidden")));
+			        item.add(new Label("patternvalid", "(not used)"));
+			        item.add(new Label("patternname", item.getModelObject().getName()));
+			        item.add(new Label("patterntext", ""));
+					return;
+				}
+		        item.add(new Label("patternname", item.getModelObject().getName()));
+				Model<String> styleModel = new Model<>();
+				String v;
+				if (item.getModelObject().isCorrectlyUsedBy(nanopub)) {
+					v = "(valid)";
+					styleModel.setObject("color:green");
+				} else {
+					v = "(invalid)";
+					styleModel.setObject("color:red");
+				}
+				Label validLabel = new Label("patternvalid", v);
+				validLabel.add(new AttributeModifier("style", styleModel));
+				item.add(validLabel);
+		        item.add(new Label("patterntext", item.getModelObject().getDescriptionFor(nanopub)));
+		    }
+
+		};
+		//patternList.setReuseItems(true);
+		resultBox.add(patternList);
     }
 
 	Nanopub getNanopub() {
@@ -357,16 +393,15 @@ public class ValidatorPage extends WebPage {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
 			resultTextModel.setObject("No creators or authors found");
-			return;
 		} else if (nanopub.getCreationTime() == null) {
 			resultTitleModel.setObject("Warning");
 			resultTitleStyleModel.setObject("color:orange");
 			resultTextModel.setObject("No creation time found");
-			return;
+		} else {
+			resultTextModel.setObject("Congratulations, this is a valid nanopublication!");
+			resultTitleModel.setObject("Valid Nanopublication");
+			resultTitleStyleModel.setObject("color:green");
 		}
-		resultTextModel.setObject("Congratulations, this is a valid nanopublication!");
-		resultTitleModel.setObject("Valid Nanopublication");
-		resultTitleStyleModel.setObject("color:green");
 	}
 
 	public void refresh() {
