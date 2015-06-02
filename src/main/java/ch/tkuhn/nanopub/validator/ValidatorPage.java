@@ -201,21 +201,25 @@ public class ValidatorPage extends WebPage {
 			private static final long serialVersionUID = -7597306960671602403L;
 
 			protected void populateItem(ListItem<NanopubPattern> item) {
-				if (nanopub == null || !item.getModelObject().isUsedBy(nanopub)) {
+				NanopubPattern pattern = item.getModelObject();
+				if (nanopub == null) {
 					item.add(new AttributeModifier("class", new Model<String>("hidden")));
 			        item.add(new Label("patternvalid", "(not used)"));
-			        item.add(new ExternalLink("patternlink", "#", item.getModelObject().getName()));
+			        item.add(new ExternalLink("patternlink", "#", pattern.getName()));
 			        item.add(new Label("patterntext", ""));
 					return;
 				}
 				String url = "#";
 				try {
-					url = item.getModelObject().getPatternInfoUrl().toString();
+					url = pattern.getPatternInfoUrl().toString();
 				} catch (MalformedURLException ex) {}
-		        item.add(new ExternalLink("patternlink", url, item.getModelObject().getName()));
+		        item.add(new ExternalLink("patternlink", url, pattern.getName()));
 				Model<String> styleModel = new Model<>();
 				String v;
-				if (item.getModelObject().isCorrectlyUsedBy(nanopub)) {
+				if (!pattern.appliesTo(nanopub)) {
+					v = "(does not apply)";
+					styleModel.setObject("color:gray");
+				} else if (item.getModelObject().isCorrectlyUsedBy(nanopub)) {
 					v = "(valid)";
 					styleModel.setObject("color:green");
 				} else {
@@ -225,7 +229,13 @@ public class ValidatorPage extends WebPage {
 				Label validLabel = new Label("patternvalid", v);
 				validLabel.add(new AttributeModifier("style", styleModel));
 				item.add(validLabel);
-		        item.add(new Label("patterntext", item.getModelObject().getDescriptionFor(nanopub)));
+				if (pattern.appliesTo(nanopub)) {
+					String description = pattern.getDescriptionFor(nanopub);
+					if (description == null) description = "";
+					item.add(new Label("patterntext", description));
+				} else {
+					item.add(new Label("patterntext", ""));
+				}
 		    }
 
 		};
@@ -377,19 +387,9 @@ public class ValidatorPage extends WebPage {
 			publishedTextModel.setObject("Only nanopublications with a valid trusty URI can be published on nanopub servers.");
 		}
 		resultBox.add(new AttributeModifier("class", new Model<String>("visible")));
-		if (nanopub.getCreators().isEmpty() && nanopub.getAuthors().isEmpty()) {
-			resultTitleModel.setObject("Warning");
-			resultTitleStyleModel.setObject("color:orange");
-			resultTextModel.setObject("No creators or authors found");
-		} else if (nanopub.getCreationTime() == null) {
-			resultTitleModel.setObject("Warning");
-			resultTitleStyleModel.setObject("color:orange");
-			resultTextModel.setObject("No creation time found");
-		} else {
-			resultTextModel.setObject("Congratulations, this is a valid nanopublication!");
-			resultTitleModel.setObject("Valid Nanopublication");
-			resultTitleStyleModel.setObject("color:green");
-		}
+		resultTextModel.setObject("Congratulations, this is a valid nanopublication!");
+		resultTitleModel.setObject("Valid Nanopublication");
+		resultTitleStyleModel.setObject("color:green");
 	}
 
 	public void refresh() {
