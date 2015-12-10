@@ -181,6 +181,7 @@ public class ValidatorPage extends WebPage {
 		resultBox.add(new ConvertAction("trigconvert", RDFFormat.TRIG, this));
 		resultBox.add(new ConvertAction("trixconvert", RDFFormat.TRIX, this));
 		resultBox.add(new ConvertAction("nqconvert", RDFFormat.NQUADS, this));
+		resultBox.add(new ConvertAction("jsonldconvert", RDFFormat.JSONLD, this));
 
 		resultBox.add(new ResourceLink<Object>("download", new DownloadResource(this)));
 

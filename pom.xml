@@ -17,6 +17,7 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <sesame.version>2.8.7</sesame.version>
   </properties>
 
   <dependencies>
@@ -49,6 +50,26 @@
       <groupId>org.nanopub</groupId>
       <artifactId>nanopub</artifactId>
       <version>1.10-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-rio-trix</artifactId>
+      <version>${sesame.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-rio-nquads</artifactId>
+      <version>${sesame.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-rio-jsonld</artifactId>
+      <version>${sesame.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.collections</groupId>
+      <artifactId>google-collections</artifactId>
+      <version>1.0</version>
     </dependency>
   </dependencies>
   <build>
