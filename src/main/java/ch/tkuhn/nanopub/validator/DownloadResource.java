@@ -9,11 +9,9 @@ public class DownloadResource implements IResource {
 
 	private static final long serialVersionUID = -9045222635249458638L;
 
-	private RDFFormat format;
 	private ValidatorPage mainPage;
 	
-	public DownloadResource(RDFFormat format, ValidatorPage mainPage) {
-		this.format = format;
+	public DownloadResource(ValidatorPage mainPage) {
 		this.mainPage = mainPage;
 	}
 
@@ -21,7 +19,7 @@ public class DownloadResource implements IResource {
 	public void respond(Attributes attributes) {
 		if (mainPage.getNanopub() == null) return;
 		WebResponse resp = (WebResponse) attributes.getResponse();
-		RDFFormat format = this.format;
+		RDFFormat format = mainPage.getFormat();
 		if (format == null) {
 			format = mainPage.getFormat();
 		}

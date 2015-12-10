@@ -182,7 +182,7 @@ public class ValidatorPage extends WebPage {
 		resultBox.add(new ConvertAction("trixconvert", RDFFormat.TRIX, this));
 		resultBox.add(new ConvertAction("nqconvert", RDFFormat.NQUADS, this));
 
-		resultBox.add(new ResourceLink<Object>("download", new DownloadResource(format, this)));
+		resultBox.add(new ResourceLink<Object>("download", new DownloadResource(this)));
 
 		trustySection = new WebMarkupContainer("trustyaction");
 		trustySection.add(new AttributeModifier("class", new Model<String>("hidden")));
