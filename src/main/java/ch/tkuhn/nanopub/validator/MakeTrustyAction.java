@@ -21,6 +21,8 @@ public class MakeTrustyAction extends Link<Object> {
 			mainPage.setMessage("Nanopublication", "Transformed to a nanopublication with a trusty URI:");
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			mainPage.showNanopub(mainPage.getNanopub(), ValidatorPage.ERROR);
+			mainPage.setMessage("Error", "Error while generating trusty URI: " + ex.getMessage());
 		}
 	}
 

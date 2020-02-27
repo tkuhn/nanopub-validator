@@ -50,6 +50,7 @@ public class ValidatorPage extends WebPage {
 
 	static final int MADE_TRUSTY = 11;
 	static final int CONVERTED = 12;
+	static final int ERROR = 100;
 
 	
 	private static ValueFactory vf = SimpleValueFactory.getInstance();
