@@ -1,30 +1,30 @@
-@prefix this: <http://example.org/nanopub-validator-example/RAtAU6U_xKTH016Eoiu11SswQkBu1elB_3_BoDJWH3arA> .
-@prefix sub: <http://example.org/nanopub-validator-example/RAtAU6U_xKTH016Eoiu11SswQkBu1elB_3_BoDJWH3arA#> .
+@prefix this: <http://purl.org/np/RAKCq6u3tmNSKlRgk7EnQcRzbLh1ygpph2d0ves1cp3Kg> .
+@prefix sub: <http://purl.org/np/RAKCq6u3tmNSKlRgk7EnQcRzbLh1ygpph2d0ves1cp3Kg#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix dc: <http://purl.org/dc/terms/> .
-@prefix pav: <http://purl.org/pav/> .
+@prefix dct: <http://purl.org/dc/terms/> .
 @prefix prov: <http://www.w3.org/ns/prov#> .
 @prefix np: <http://www.nanopub.org/nschema#> .
 @prefix npx: <http://purl.org/nanopub/x/> .
+@prefix orcid: <https://orcid.org/> .
 @prefix ex: <http://example.org/> .
 
 sub:Head {
-	this: np:hasAssertion sub:assertion ;
-		np:hasProvenance sub:provenance ;
-		np:hasPublicationInfo sub:pubinfo ;
-		a np:Nanopublication .
+  this: np:hasAssertion sub:assertion;
+    np:hasProvenance sub:provenance;
+    np:hasPublicationInfo sub:pubinfo;
+    a np:Nanopublication .
 }
 
 sub:assertion {
-	ex:mosquito ex:transmits ex:malaria .
+  ex:mosquito ex:transmits ex:malaria .
 }
 
 sub:provenance {
-	sub:assertion prov:hadPrimarySource <http://dx.doi.org/10.3233/ISU-2010-0613> .
+  sub:assertion prov:hadPrimarySource <http://dx.doi.org/10.3233/ISU-2010-0613> .
 }
 
 sub:pubinfo {
-	this: dc:created "2014-07-24T18:05:11+01:00"^^xsd:dateTime ;
-		pav:createdBy <http://orcid.org/0000-0002-1267-0234> ;
-		a npx:ExampleNanopub .
+  this: dct:created "2020-02-27T12:35:39.713+01:00"^^xsd:dateTime;
+    dct:creator orcid:0000-0002-1267-0234;
+    a npx:ExampleNanopub .
 }

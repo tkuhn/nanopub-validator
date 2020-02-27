@@ -11,7 +11,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubUtils;
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
 
 public class DirectInputPanel extends Panel {
 

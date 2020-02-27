@@ -8,8 +8,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.trustyuri.TrustyUriUtils;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
@@ -24,6 +22,11 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
+import org.eclipse.rdf4j.rio.RDFFormat;
 import org.nanopub.MalformedNanopubException;
 import org.nanopub.Nanopub;
 import org.nanopub.NanopubImpl;
@@ -31,11 +34,8 @@ import org.nanopub.NanopubPattern;
 import org.nanopub.NanopubPatterns;
 import org.nanopub.extra.server.GetNanopub;
 import org.nanopub.trusty.TrustyNanopubUtils;
-import org.openrdf.OpenRDFException;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.repository.sparql.SPARQLRepository;
-import org.openrdf.rio.RDFFormat;
+
+import net.trustyuri.TrustyUriUtils;
 
 public class ValidatorPage extends WebPage {
 
@@ -51,6 +51,8 @@ public class ValidatorPage extends WebPage {
 	static final int MADE_TRUSTY = 11;
 	static final int CONVERTED = 12;
 
+	
+	private static ValueFactory vf = SimpleValueFactory.getInstance();
 
 	private Model<String> messageTextModel = new Model<>("");
 	private Model<String> resultTextModel = new Model<>("");
@@ -284,7 +286,7 @@ public class ValidatorPage extends WebPage {
 			} else if (mode == SPARQL_ENDPOINT_MODE) {
 				String url = (String) objs[0];
 				SPARQLRepository sr = new SPARQLRepository(url);
-				URI nanopubUri = new URIImpl((String) objs[1]);
+				IRI nanopubUri = vf.createIRI((String) objs[1]);
 				sr.initialize();
 				nanopub = new NanopubImpl(sr, nanopubUri);
 				sr.shutDown();
@@ -297,9 +299,6 @@ public class ValidatorPage extends WebPage {
 				}
 				setMessage("Nanopublication", "Loaded from nanopub server:");
 			}
-		} catch (OpenRDFException ex) {
-			setMessage("Invalid Nanopublication", "color:red", ex.getMessage());
-			return;
 		} catch (MalformedNanopubException ex) {
 			setMessage("Invalid Nanopublication", "color:red", ex.getMessage());
 			return;
@@ -370,7 +369,7 @@ public class ValidatorPage extends WebPage {
 			trustySection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (TrustyNanopubUtils.isValidTrustyNanopub(nanopub)) {
 			try {
-				String u = "http://np.inn.ac/" + TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
+				String u = "http://server.nanopubs.lod.labs.vu.nl/" + TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
 				new NanopubImpl(new URL(u));
 				publishedTitleModel.setObject("Published");
 				publishedTitleStyleModel.setObject("color:green");
@@ -378,7 +377,7 @@ public class ValidatorPage extends WebPage {
 			} catch (IOException ex) {
 				publishedTitleModel.setObject("Not published");
 				publishedTitleStyleModel.setObject("color:black");
-				String u = "http://np.inn.ac/";
+				String u = "http://server.nanopubs.lod.labs.vu.nl/";
 				publishedTextModel.setObject("This nanopublication is not published on a nanopub server (at least not on <a href=\"" + u + "\">" + u + "</a>).");
 				publishSection.add(new AttributeModifier("class", new Model<String>("visible")));
 			} catch (Exception ex) {}

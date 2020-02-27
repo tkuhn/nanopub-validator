@@ -17,55 +17,61 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sesame.version>2.9.0</sesame.version>
+    <wicket.version>8.7.0</wicket.version>
+    <jetty.version>9.4.24.v20191120</jetty.version>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.1</version>
-    </dependency>
+
+    <!--  WICKET DEPENDENCIES -->
     <dependency>
       <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-core</artifactId>
-      <version>6.10.0</version>
+      <artifactId>wicket</artifactId>
+      <version>${wicket.version}</version>
+      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-extensions</artifactId>
-      <version>6.10.0</version>
+      <version>${wicket.version}</version>
     </dependency>
+
+    <!-- LOGGING DEPENDENCIES - LOG4J -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.6.4</version>
+      <version>1.7.25</version>
     </dependency>
+
+    <!--  JUNIT DEPENDENCY FOR TESTING -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!--  JETTY DEPENDENCIES FOR TESTING  -->
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${jetty.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>${jetty.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!--  NANOPUB DEPENDENCIES  -->
     <dependency>
       <groupId>org.nanopub</groupId>
       <artifactId>nanopub</artifactId>
-      <version>1.17</version>
+      <version>1.28-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>org.openrdf.sesame</groupId>
-      <artifactId>sesame-rio-trix</artifactId>
-      <version>${sesame.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrdf.sesame</groupId>
-      <artifactId>sesame-rio-nquads</artifactId>
-      <version>${sesame.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openrdf.sesame</groupId>
-      <artifactId>sesame-rio-jsonld</artifactId>
-      <version>${sesame.version}</version>
-    </dependency>
+
     <dependency>
       <groupId>com.google.collections</groupId>
       <artifactId>google-collections</artifactId>
@@ -76,6 +82,7 @@
       <artifactId>jaxb-api</artifactId>
       <version>2.3.1</version>
     </dependency>
+
   </dependencies>
   <build>
     <finalName>nanopub-validator</finalName>
@@ -96,9 +103,19 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.26</version>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <optimize>true</optimize>
+          <debug>true</debug>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty.version}</version>
       </plugin>
     </plugins>
   </build>
