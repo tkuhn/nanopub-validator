@@ -17,6 +17,7 @@ public class ValidatorApplication extends WebApplication {
 		super.init();
 		uploadFolder = new Folder(System.getProperty("java.io.tmpdir"), "wicket-uploads");
 		uploadFolder.mkdirs();
+		getCspSettings().blocking().disabled();
 	}
 
 	public Folder getUploadFolder() {

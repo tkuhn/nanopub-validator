@@ -1,5 +1,5 @@
 # Pull base image
-FROM tomcat:8-jre8
+FROM tomcat:9.0.56-jre17-temurin
 
 # Remove default webapps:
 RUN rm -fr /usr/local/tomcat/webapps/*
