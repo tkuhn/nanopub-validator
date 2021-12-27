@@ -370,7 +370,7 @@ public class ValidatorPage extends WebPage {
 			trustySection.add(new AttributeModifier("class", new Model<String>("visible")));
 		} else if (TrustyNanopubUtils.isValidTrustyNanopub(nanopub)) {
 			try {
-				String u = "http://server.nanopubs.lod.labs.vu.nl/" + TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
+				String u = "https://np.petapico.org/" + TrustyUriUtils.getArtifactCode(nanopub.getUri().toString());
 				new NanopubImpl(new URL(u));
 				publishedTitleModel.setObject("Published");
 				publishedTitleStyleModel.setObject("color:green");
@@ -378,7 +378,7 @@ public class ValidatorPage extends WebPage {
 			} catch (IOException ex) {
 				publishedTitleModel.setObject("Not published");
 				publishedTitleStyleModel.setObject("color:black");
-				String u = "http://server.nanopubs.lod.labs.vu.nl/";
+				String u = "https://np.petapico.org/";
 				publishedTextModel.setObject("This nanopublication is not published on a nanopub server (at least not on <a href=\"" + u + "\">" + u + "</a>).");
 				publishSection.add(new AttributeModifier("class", new Model<String>("visible")));
 			} catch (Exception ex) {}
