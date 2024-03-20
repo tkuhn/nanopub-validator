@@ -17,7 +17,7 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <wicket.version>9.7.0</wicket.version>
+    <wicket.version>9.17.0</wicket.version>
     <jetty.version>10.0.7</jetty.version>
   </properties>
 
